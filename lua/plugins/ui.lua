@@ -70,11 +70,11 @@ return {
     opts = function()
       local enable_conceal = false -- Hide command text if true
       return {
-        presets = { bottom_search = true }, -- The kind of popup used for /
+
         cmdline = {
           view = 'cmdline', -- The kind of popup used for :
           format = {
-            cmdline = { conceal = enable_conceal },
+            cmdline = { icon = '', conceal = enable_conceal },
             search_down = { conceal = enable_conceal },
             search_up = { conceal = enable_conceal },
             filter = { conceal = enable_conceal },
@@ -84,9 +84,9 @@ return {
           },
         },
 
-        popupmenu = { enabled = true },
         -- Disable every other noice feature
         messages = { enabled = true },
+        notify = { enabled = true, view = 'notify' },
         lsp = {
           hover = { enabled = false },
           signature = { enabled = false },

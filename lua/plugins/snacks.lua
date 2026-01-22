@@ -2,7 +2,6 @@ return {
   {
     'folke/snacks.nvim',
     opts = {
-      input = { enabled = true },
       scope = { enabled = true },
       scroll = { enabled = true },
       toggle = { enabled = true },

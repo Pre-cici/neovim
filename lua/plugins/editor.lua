@@ -300,6 +300,7 @@ return {
     opts = {},
   },
   { 'NMAC427/guess-indent.nvim' }, -- Detect tabstop and shiftwidth automatically
+
   {
     'mikavilpas/yazi.nvim',
     event = 'User BaseDefered',
