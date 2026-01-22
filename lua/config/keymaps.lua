@@ -27,10 +27,10 @@ keymap.set('n', '<C-Left>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Wi
 keymap.set('n', '<C-Right>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
+keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
+keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
+keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 -- Move Lines
 keymap.set('n', '<A-J>', "<cmd>execute 'move .+' . v:count1<cr>==", { desc = 'Move Down' })
@@ -43,9 +43,16 @@ keymap.set('v', '<A-K>', ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv
 -- buffers
 keymap.set('n', '<S-h>', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
 keymap.set('n', '<S-l>', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
+keymap.set("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+keymap.set("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+keymap.set("n", "<leader>bd", function()
+  Snacks.bufdelete()
+end, { desc = "Delete Buffer" })
+keymap.set("n", "<leader>bo", function()
+  Snacks.bufdelete.other()
+end, { desc = "Delete Other Buffers" })
+keymap.set("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
 
--- save file
-keymap.set({ 'i', 'x', 'n', 's' }, '<C-s>', '<cmd>w<cr><esc>', { desc = 'Save File' })
 
 --keywordprg
 keymap.set('n', '<leader>K', '<cmd>norm! K<cr>', { desc = 'Keywordprg' })
@@ -107,7 +114,6 @@ keymap.set('n', '<leader>fA', 'ggVG', { desc = 'Select All' })
 
 -- keywordprg
 keymap.set('n', '<leader>K', '<cmd>norm! K<cr>', { desc = 'Keywordprg' })
-
 keymap.set('n', 'K', function()
   vim.lsp.buf.hover { border = 'rounded' }
 end, { desc = 'LSP Hover' })
@@ -131,6 +137,7 @@ local function get_root(bufnr)
   end
   return vim.uv.cwd()
 end
+
 -- lazygit
 if vim.fn.executable 'lazygit' == 1 then
   keymap.set('n', '<leader>gg', function()
@@ -142,7 +149,6 @@ if vim.fn.executable 'lazygit' == 1 then
 end
 
 -- TODO: location list / quickfix list / diagnostics
---
 keymap.set("n", "<leader>cl", function()
   local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
   if not success and err then
@@ -181,6 +187,8 @@ keymap.set("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 -- TODO:  toggle options
 
 -- toggle options
+-- LazyVim.format.snacks_toggle():map("<leader>uf")
+-- LazyVim.format.snacks_toggle(true):map("<leader>uF")
 -- Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
 -- Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
 -- Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>uL")
@@ -196,4 +204,3 @@ keymap.set("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 -- Snacks.toggle.scroll():map("<leader>uS")
 -- Snacks.toggle.profiler():map("<leader>dpp")
 -- Snacks.toggle.profiler_highlights():map("<leader>dph")
-

@@ -71,6 +71,7 @@ local schemes = {
             BlinkCmpMenuBorder = { bg = colors.none },
             DropBarMenuHoverIcon = { bg = colors.none, fg = colors.flamingo, reverse = false },
             LazyNormal = { bg = colors.mantle, fg = colors.text },
+            RenderMarkdownCode = { bg = colors.none },
           }
         end,
         default_integrations = true,

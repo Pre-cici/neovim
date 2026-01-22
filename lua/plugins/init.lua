@@ -22,6 +22,7 @@ require('lazy').setup {
   spec = {
     -- import your plugins
     { import = 'plugins.editor' },
+    { import = 'plugins.file' },
     { import = 'plugins.picker' },
     { import = 'plugins.ui' },
     { import = 'plugins.colorscheme' },
@@ -30,6 +31,7 @@ require('lazy').setup {
     { import = 'plugins.lspconfig' },
     { import = 'plugins.completion' },
     { import = 'plugins.statusline' },
+    { import = 'plugins.markdown' },
   },
   -- highlight-end
   -- Configure any other settings here. See the documentation for more details.

@@ -81,6 +81,7 @@ return {
           { ']', group = 'next' },
           { 'g', group = 'goto' },
           { 'gs', group = 'surround' },
+          { 'gr', group = 'lsp buf' },
           { 'z', group = 'fold' },
 
           {
@@ -137,12 +138,35 @@ return {
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
 
+      require('mini.pairs').setup {
+        modes = { insert = true, command = true, terminal = false },
+        -- skip autopair when next character is one of these
+        skip_next = [=[[%w%%%'%[%"%.%`%$]]=],
+        -- skip autopair when the cursor is inside these treesitter nodes
+        skip_ts = { 'string' },
+        -- skip autopair when next character is closing pair
+        -- and there are more closing pairs than opening pairs
+        skip_unbalanced = true,
+        -- better deal with markdown code blocks
+        markdown = true,
+      }
+
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      require('mini.surround').setup {
+        mappings = {
+          add = 'gsa',
+          delete = 'gsd',
+          find = 'gsf',
+          find_left = 'gsF',
+          highlight = 'gsh',
+          replace = 'gsr',
+          update_n_lines = 'gsn',
+        },
+      }
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
@@ -293,21 +317,5 @@ return {
       { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     },
   },
-
-  {
-    'windwp/nvim-autopairs',
-    event = 'InsertEnter',
-    opts = {},
-  },
   { 'NMAC427/guess-indent.nvim' }, -- Detect tabstop and shiftwidth automatically
-
-  {
-    'mikavilpas/yazi.nvim',
-    event = 'User BaseDefered',
-    cmd = { 'Yazi', 'Yazi cwd', 'Yazi toggle' },
-    opts = {
-      open_for_directories = true,
-      floating_window_scaling_factor = 0.9,
-    },
-  },
 }

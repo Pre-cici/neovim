@@ -43,7 +43,6 @@ return {
   },
 
   keys = {
-    { "<leader>e", function() Snacks.picker.explorer({ layout = { preset = "default" }}) end, desc = "File Explorer" },
 
     { "<leader><space>", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = get_root(0) }) end, desc = "Find Files" },
     { "<leader>bb", function() Snacks.picker.buffers({ layout={preset="select"} }) end, desc = "Buffers" },
