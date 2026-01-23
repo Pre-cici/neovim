@@ -43,7 +43,7 @@ return {
   },
 
   keys = {
-
+    -- stylua: ignore
     { "<leader><space>", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = get_root(0) }) end, desc = "Find Files" },
     { "<leader>bb", function() Snacks.picker.buffers({ layout={preset="select"} }) end, desc = "Buffers" },
     { "<leader>h", function() Snacks.picker.help() end, desc = "Help Pages" },
@@ -62,6 +62,7 @@ return {
     { "<leader>ft", function() Snacks.picker.todo_comments() end, desc = "Todo" },
     { "<leader>fT", function () Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end, desc = "Todo/Fix/Fixme" },
     { "<leader>fu", function() Snacks.picker.undo() end, desc = "Undotree" },
+
 
     -- { "<leader>fl", function() Snacks.picker.loclist() end, desc = "Location List" },
     -- { "<leader>fq", function() Snacks.picker.qflist() end, desc = "Quickfix List" },

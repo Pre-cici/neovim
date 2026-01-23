@@ -32,6 +32,7 @@ require('lazy').setup {
     { import = 'plugins.completion' },
     { import = 'plugins.statusline' },
     { import = 'plugins.markdown' },
+    { import = 'plugins.debug' },
   },
   -- highlight-end
   -- Configure any other settings here. See the documentation for more details.

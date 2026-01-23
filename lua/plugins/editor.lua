@@ -129,6 +129,7 @@ return {
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+    event = "VeryLazy",
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -166,6 +167,7 @@ return {
           replace = 'gsr',
           update_n_lines = 'gsn',
         },
+
       }
 
       -- ... and there is more!

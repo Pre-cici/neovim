@@ -14,8 +14,10 @@ vim.g.markdown_recommended_style = 0
 local opt = vim.opt
 
 -- UI / display
+opt.cmdheight = 0 -- Hide command line unless needed.
 opt.number = true
 opt.relativenumber = true
+
 opt.signcolumn = 'yes'
 -- opt.statuscolumn = "%C%l %s"
 opt.cursorline = true
@@ -31,7 +33,6 @@ opt.winborder = vim.g.bordered and 'rounded' or 'none'
 
 -- Mouse
 opt.mouse = 'a'
-opt.mousemoveevent = true
 
 -- Clipboard (disable in SSH)
 opt.clipboard = vim.env.SSH_CONNECTION and '' or 'unnamedplus'

@@ -101,7 +101,6 @@ return {
     opts = function()
       local enable_conceal = false -- Hide command text if true
       return {
-
         cmdline = {
           view = 'cmdline', -- The kind of popup used for :
           format = {
@@ -115,9 +114,23 @@ return {
           },
         },
 
-        -- Disable every other noice feature
-        messages = { enabled = true },
-        notify = { enabled = true, view = 'notify' },
+        routes = {
+          {
+            filter = {
+              event = 'msg_show',
+              any = {
+                { find = '%d+L, %d+B' },
+                { find = '; after #%d+' },
+                { find = '; before #%d+' },
+              },
+            },
+            view = 'mini',
+          },
+        },
+        messages = {
+          enabled = true,
+          view = 'mini',
+        },
         lsp = {
           hover = { enabled = false },
           signature = { enabled = false },
@@ -127,44 +140,23 @@ return {
         },
       }
     end,
+    -- stylua: ignore
     keys = {
       { '<leader>n', '', desc = 'notice' },
-
-      {
-        '<leader>nn',
-        function()
-          require('noice').cmd 'pick'
-        end,
-        desc = 'Notification Search',
-      },
-      {
-        '<leader>nl',
-        function()
-          require('noice').cmd 'last'
-        end,
-        desc = 'Noice Last Message',
-      },
-      {
-        '<leader>nh',
-        function()
-          require('noice').cmd 'history'
-        end,
-        desc = 'Noice History',
-      },
-      {
-        '<leader>na',
-        function()
-          require('noice').cmd 'all'
-        end,
-        desc = 'Noice All',
-      },
-      {
-        '<leader>nd',
-        function()
-          require('noice').cmd 'dismiss'
-        end,
-        desc = 'Dismiss All',
-      },
+      { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
+      { '<leader>nl', function() require('noice').cmd 'last' end, desc = 'Noice Last Message', },
+      { '<leader>nn', function() require('noice').cmd 'all' end, desc = 'Noice All', },
+      { '<leader>nd', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All', },
+      { '<leader>nm', ':messages <CR>', desc = 'Messages', },
     },
+    config = function(_, opts)
+      -- HACK: noice shows messages from before it was enabled,
+      -- but this is not ideal when Lazy is installing plugins,
+      -- so clear the messages in this case.
+      if vim.o.filetype == 'lazy' then
+        vim.cmd [[messages clear]]
+      end
+      require('noice').setup(opts)
+    end,
   },
 }
