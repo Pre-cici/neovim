@@ -173,14 +173,6 @@ return {
         --     lib.component.aerial(),
         --   },
         -- },
-        -- statuscolumn = { -- UI left column
-        --   init = function(self)
-        --     self.bufnr = vim.api.nvim_get_current_buf()
-        --   end,
-        --   lib.component.foldcolumn(),
-        --   lib.component.numbercolumn(),
-        --   lib.component.signcolumn(),
-        -- } or nil,
 
         statusline = { -- UI statusbar
           hl = { fg = 'fg', bg = 'bg' },
@@ -196,7 +188,7 @@ return {
           lib.component.fill(),
           -- lib.component.lsp(),
           LspClients,
-          lib.component.compiler_state(),
+          -- lib.component.compiler_state(),
           lib.component.virtual_env(),
           lib.component.nav { percentage = false },
           lib.component.mode { surround = { separator = 'right' } },

@@ -4,22 +4,10 @@ return {
     'MagicDuck/grug-far.nvim',
     opts = { headerMaxWidth = 80 },
     cmd = { 'GrugFar', 'GrugFarWithin' },
+    -- stylua: ignore
     keys = {
-      {
-        '<leader>ss', -- CHANGED: was <leader>sr
-        function()
-          local grug = require 'grug-far'
-          local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
-          grug.open {
-            transient = true,
-            prefills = {
-              filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
-            },
-          }
-        end,
-        mode = { 'n', 'x' },
-        desc = 'Search and Replace',
-      },
+      { '<leader>ss',  mode = { 'n', 'x' }, function() local grug = require 'grug-far' local ext = vim.bo.buftype == '' and vim.fn.expand '%:e' grug.open { transient = true, prefills = { filesFilter = ext and ext ~= '' and '*.' .. ext or nil, }, } end,
+        desc = 'Search and Replace', },
     },
   },
 
@@ -30,10 +18,7 @@ return {
     ---@type Flash.Config
     opts = {
       label = {
-        rainbow = {
-          enabled = true,
-          -- number between 1 and 9
-          shade = 9,
+        rainbow = { enabled = true, shade = 9,
         },
       },
     },
@@ -44,15 +29,8 @@ return {
       { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
       { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-      { "<c-space>", mode = { "n", "o", "x" },
-        function()
-          require("flash").treesitter({
-            actions = {
-              ["<c-space>"] = "next",
-              ["<BS>"] = "prev"
-            }
-          })
-        end, desc = "Treesitter Incremental Selection" },
+      { "<c-space>", mode = { "n", "o", "x" }, function() require("flash").treesitter({ actions = { ["<c-space>"] = "next", ["<BS>"] = "prev" } }) end, 
+        desc = "Treesitter Incremental Selection" },
     },
   },
 
@@ -64,6 +42,7 @@ return {
     opts = {
       preset = 'helix',
       defaults = {},
+      -- stylua: ignore
       spec = {
         {
           mode = { 'n', 'x' },
@@ -77,6 +56,8 @@ return {
           { '<leader>t', group = 'toggle' },
           { '<leader>x', group = 'diagnostics/quickfix' },
           { '<leader>n', group = 'notification' },
+          { "<leader>o", group = "overseer" } ,
+
           { '[', group = 'prev' },
           { ']', group = 'next' },
           { 'g', group = 'goto' },
@@ -84,43 +65,21 @@ return {
           { 'gr', group = 'lsp buf' },
           { 'z', group = 'fold' },
 
-          {
-            '<leader>b',
-            group = 'buffer',
-            expand = function()
-              return require('which-key.extras').expand.buf()
-            end,
-          },
+          { '<leader>b', group = 'buffer', expand = function() return require('which-key.extras').expand.buf() end, },
 
-          {
-            '<leader>w',
-            group = 'windows',
-            proxy = '<c-w>',
-            expand = function()
-              return require('which-key.extras').expand.win()
-            end,
-          },
+          { '<leader>w', group = 'windows', proxy = '<c-w>', expand = function() return require('which-key.extras').expand.win() end, },
 
           -- better descriptions
           { 'gx', desc = 'Open with system app' },
         },
       },
     },
+    -- stylua: ignore
     keys = {
-      {
-        '<leader>?',
-        function()
-          require('which-key').show { global = false }
-        end,
-        desc = 'Buffer Keymaps (which-key)',
-      },
-      {
-        '<c-w><space>',
-        function()
-          require('which-key').show { keys = '<c-w>', loop = true }
-        end,
-        desc = 'Window Hydra Mode (which-key)',
-      },
+      { '<leader>?', function() require('which-key').show { global = false } end,
+        desc = 'Buffer Keymaps (which-key)', },
+      { '<c-w><space>', function() require('which-key').show { keys = '<c-w>', loop = true } end,
+        desc = 'Window Hydra Mode (which-key)', },
     },
     config = function(_, opts)
       require('which-key').setup(opts)
@@ -129,7 +88,7 @@ return {
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
-    event = "VeryLazy",
+    event = 'VeryLazy',
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -167,7 +126,6 @@ return {
           replace = 'gsr',
           update_n_lines = 'gsn',
         },
-
       }
 
       -- ... and there is more!
@@ -195,6 +153,7 @@ return {
         topdelete = { text = '' },
         changedelete = { text = '▎' },
       },
+      -- stylua: ignore
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
 
@@ -205,30 +164,17 @@ return {
         end
 
         -- Navigation
-        map('n', ']c', function()
-          if vim.wo.diff then
-            vim.cmd.normal { ']c', bang = true }
-          else
-            gitsigns.nav_hunk 'next'
-          end
-        end, { desc = 'Jump to next git [c]hange' })
-
-        map('n', '[c', function()
-          if vim.wo.diff then
-            vim.cmd.normal { '[c', bang = true }
-          else
-            gitsigns.nav_hunk 'prev'
-          end
-        end, { desc = 'Jump to previous git [c]hange' })
+        map('n', ']c', function() if vim.wo.diff then vim.cmd.normal { ']c', bang = true } else gitsigns.nav_hunk 'next' end end,
+          { desc = 'Jump to next git [c]hange' })
+        map('n', '[c', function() if vim.wo.diff then vim.cmd.normal { '[c', bang = true } else gitsigns.nav_hunk 'prev' end end, 
+          { desc = 'Jump to previous git [c]hange' })
 
         -- Actions
         -- visual mode
-        map('v', '<leader>gs', function()
-          gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        end, { desc = 'git [s]tage hunk' })
-        map('v', '<leader>gr', function()
-          gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        end, { desc = 'git [r]eset hunk' })
+        map('v', '<leader>gs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end,
+          { desc = 'git [s]tage hunk' })
+        map('v', '<leader>gr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, 
+          { desc = 'git [r]eset hunk' })
         -- normal mode
         map('n', '<leader>gs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
         map('n', '<leader>gr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
@@ -238,13 +184,59 @@ return {
         map('n', '<leader>gp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
         map('n', '<leader>gb', gitsigns.blame_line, { desc = 'git [b]lame line' })
         map('n', '<leader>gd', gitsigns.diffthis, { desc = 'git [d]iff against index' })
-        map('n', '<leader>gD', function()
-          gitsigns.diffthis '@'
-        end, { desc = 'git [D]iff against last commit' })
+        map('n', '<leader>gD', function() gitsigns.diffthis '@' end, { desc = 'git [D]iff against last commit' })
+
         -- Toggles
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
         map('n', '<leader>tD', gitsigns.preview_hunk_inline, { desc = '[T]oggle git show [D]eleted' })
       end,
+    },
+  },
+  {
+    "stevearc/aerial.nvim",
+    event = { 'BufReadPre', 'BufNewFile' },
+    opts = function()
+      -- local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+
+      -- HACK: fix lua's weird choice for `Package` for control
+      -- structures like if/else/for/etc.
+      -- icons.lua = { Package = icons.Control }
+
+      ---@type table<string, string[]>|false
+      -- local filter_kind = false
+      -- if LazyVim.config.kind_filter then
+      --   filter_kind = assert(vim.deepcopy(LazyVim.config.kind_filter))
+      --   filter_kind._ = filter_kind.default
+      --   filter_kind.default = nil
+      -- end
+
+      local opts = {
+        attach_mode = "global",
+        backends = { "lsp", "treesitter", "markdown", "man" },
+        show_guides = true,
+        layout = {
+          resize_to_content = false,
+          win_opts = {
+            winhl = "Normal:NormalFloat,FloatBorder:NormalFloat,SignColumn:SignColumnSB",
+            signcolumn = "yes",
+            statuscolumn = " ",
+          },
+        },
+        -- icons = icons,
+        -- filter_kind = filter_kind,
+        
+        -- stylua: ignore
+        guides = {
+          mid_item   = "├╴",
+          last_item  = "└╴",
+          nested_top = "│ ",
+          whitespace = "  ",
+        },
+      }
+      return opts
+    end,
+    keys = {
+      { "<leader>xs", "<cmd>AerialToggle<cr>", desc = "Aerial (Symbols)" },
     },
   },
 
@@ -259,6 +251,7 @@ return {
         },
       },
     },
+    -- stylua: ignore
     keys = {
       { '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Diagnostics (Trouble)' },
       { '<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', desc = 'Buffer Diagnostics (Trouble)' },
@@ -268,43 +261,13 @@ return {
       { '<leader>xq', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' },
       { '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
       { '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
-      {
-        '[q',
-        function()
-          if require('trouble').is_open() then
-            require('trouble').prev { skip_groups = true, jump = true }
-          else
-            local ok, err = pcall(vim.cmd.cprev)
-            if not ok then
-              vim.notify(err, vim.log.levels.ERROR)
-            end
-          end
-        end,
-        desc = 'Previous Trouble/Quickfix Item',
-      },
-      {
-        ']q',
-        function()
-          if require('trouble').is_open() then
-            require('trouble').next { skip_groups = true, jump = true }
-          else
-            local ok, err = pcall(vim.cmd.cnext)
-            if not ok then
-              vim.notify(err, vim.log.levels.ERROR)
-            end
-          end
-        end,
-        desc = 'Next Trouble/Quickfix Item',
-      },
+      { '[q', function() if require('trouble').is_open() then require('trouble').prev { skip_groups = true, jump = true } else local ok, err = pcall(vim.cmd.cprev) if not ok then vim.notify(err, vim.log.levels.ERROR) end end end, 
+        desc = 'Previous Trouble/Quickfix Item', },
+      { ']q', function() if require('trouble').is_open() then require('trouble').next { skip_groups = true, jump = true } else local ok, err = pcall(vim.cmd.cnext) if not ok then vim.notify(err, vim.log.levels.ERROR) end end end,
+        desc = 'Next Trouble/Quickfix Item', },
     },
   },
 
-  -- TODO:
-  -- FIXME:
-  -- HACK:
-  -- PERF:
-  -- NOTE:
-  -- TEST:
   {
     'folke/todo-comments.nvim',
     event = { 'BufReadPre', 'BufNewFile' },
@@ -319,5 +282,23 @@ return {
       { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     },
   },
-  { 'NMAC427/guess-indent.nvim' }, -- Detect tabstop and shiftwidth automatically
+
+  {
+    'christoomey/vim-tmux-navigator',
+    cmd = {
+      'TmuxNavigateLeft',
+      'TmuxNavigateDown',
+      'TmuxNavigateUp',
+      'TmuxNavigateRight',
+      'TmuxNavigatePrevious',
+      'TmuxNavigatorProcessList',
+    },
+    keys = {
+      { '<c-h>', '<cmd>TmuxNavigateLeft<cr>' },
+      { '<c-j>', '<cmd>TmuxNavigateDown<cr>' },
+      { '<c-k>', '<cmd>TmuxNavigateUp<cr>' },
+      { '<c-l>', '<cmd>TmuxNavigateRight<cr>' },
+      { '<c-\\>', '<cmd>TmuxNavigatePrevious<cr>' },
+    },
+  },
 }

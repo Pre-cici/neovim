@@ -1,6 +1,39 @@
-return { -- Autocompletion
+return {
+  {
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- used for completion, annotations and signatures of Neovim apis
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    dependencies = {
+      {
+        'DrKJeff16/wezterm-types',
+        lazy = true,
+        version = false, -- Get the latest version
+      },
+    },
+    opts = {
+      library = {
+        'lazy.nvim',
+        'snacks.nvim',
+        'catppuccin',
+        'nvim-dap-ui',
+
+        { path = 'nvim-dap', mods = { 'dap' } },
+        { path = 'nvim-nio', mods = { 'nio' } },
+        { path = 'nvim-dap-ui', mods = { 'dapui' } },
+
+        { path = 'wezterm-types', mods = { 'wezterm' } },
+
+        -- Load luvit types when the `vim.uv` word is found
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+
+  { -- Autocompletion
+
     'saghen/blink.cmp',
-    event = "InsertEnter",
+    event = 'InsertEnter',
     version = '1.*',
     dependencies = {
       -- Snippet Engine
@@ -94,4 +127,5 @@ return { -- Autocompletion
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
     },
-  }
+  },
+}

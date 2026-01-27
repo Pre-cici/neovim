@@ -31,8 +31,10 @@ require('lazy').setup {
     { import = 'plugins.lspconfig' },
     { import = 'plugins.completion' },
     { import = 'plugins.statusline' },
-    { import = 'plugins.markdown' },
+    { import = 'plugins.code' },
     { import = 'plugins.debug' },
+    { import = 'plugins.markdown' },
+    { import = 'plugins.python' },
   },
   -- highlight-end
   -- Configure any other settings here. See the documentation for more details.

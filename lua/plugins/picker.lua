@@ -17,11 +17,8 @@ return {
   dependencies = {
     { "nvim-tree/nvim-web-devicons", lazy = true },
   },
-  priority = 1000,
-  lazy = false,
   opts = {
     picker = {
-      enabled = true,
       win = {
         input = {
           keys = {
@@ -42,8 +39,8 @@ return {
     },
   },
 
+  -- stylua: ignore
   keys = {
-    -- stylua: ignore
     { "<leader><space>", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = get_root(0) }) end, desc = "Find Files" },
     { "<leader>bb", function() Snacks.picker.buffers({ layout={preset="select"} }) end, desc = "Buffers" },
     { "<leader>h", function() Snacks.picker.help() end, desc = "Help Pages" },
@@ -68,13 +65,12 @@ return {
     -- { "<leader>fq", function() Snacks.picker.qflist() end, desc = "Quickfix List" },
     -- { "<leader>fj", function() Snacks.picker.jumps() end, desc = "Jumps" },
 
-    { "<leader>/", function() Snacks.picker.grep({ layout={preset="ivy_split"}, cwd = get_root(0), live = true }) end, desc = "Grep (Root)" },
-
-    { "<leader>sg", function() Snacks.picker.grep({ layout={preset="ivy_split"}, cwd = get_root(0), live = true }) end, desc = "Grep (Root)" },
-    { "<leader>sw", function()
-        local w = vim.fn.expand("<cword>")
-        Snacks.picker.grep({ layout={preset="ivy_split"}, cwd = get_root(0), search = w, live = true })
-      end, desc = "Grep Word (Root)" },
+    { "<leader>/", function() Snacks.picker.grep({ layout={preset="ivy_split"}, cwd = get_root(0), live = true }) end,
+      desc = "Grep (Root)" },
+    { "<leader>sg", function() Snacks.picker.grep({ layout={preset="ivy_split"}, cwd = get_root(0), live = true }) end,
+      desc = "Grep (Root)" },
+    { "<leader>sw", function() local w = vim.fn.expand("<cword>") Snacks.picker.grep({ layout={preset="ivy_split"}, cwd = get_root(0), search = w, live = true }) end,
+      desc = "Grep Word (Root)" },
     { "<leader>sb", function() Snacks.picker.lines({layout={preset="ivy_split"}}) end, desc = "Search Buffer Lines" },
     { "<leader>sB", function() Snacks.picker.grep_buffers({layout={preset="ivy_split"}}) end, desc = "Search Open Buffers" },
     { "<leader>s/", function() Snacks.picker.search_history() end, desc = "Search History" },

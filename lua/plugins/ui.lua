@@ -3,25 +3,12 @@ return {
     'folke/snacks.nvim',
     opts = {
       indent = {
-        indent = {
-          enabled = true,
-          char = '',
-          hl = 'SnacksIndent', ---@type string|string[] hl groups for indent guides
-        },
-        animate = {
-          enabled = vim.fn.has 'nvim-0.10' == 0,
-        },
-        scope = {
-          enabled = true,
-          char = '│',
-          underline = false,
-          only_current = true,
-          hl = 'SnacksIndentScope', ---@type string|string[] hl group for scopes
-        },
+        indent = { char = '' },
+        animate = { enabled = false },
+        scope = { char = '│', only_current = true },
         chunk = {
           enabled = true,
           only_current = true,
-          hl = 'SnacksIndentChunk', ---@type string|string[] hl group for chunk scopes
           char = {
             corner_top = '╭',
             corner_bottom = '╰',
@@ -31,66 +18,10 @@ return {
           },
         },
       },
-      statuscolumn = {
-        enabled = true,
-        folds = {
-          open = true, -- show open fold icons
-          git_hl = true, -- use Git Signs hl for fold icons
-        },
-      },
+      statuscolumn = { folds = { open = true, git_hl = true } },
+    },
+  },
 
-      dashboard = {
-        preset = {
-          header = [[         
-                             █████                                          
-                            ▒▒███                                           
- ████████   ██████   █████  ███████   ████████   ██████  ████████    ██████ 
-▒▒███▒▒███ ███▒▒███ ███▒▒  ▒▒▒███▒   ▒▒███▒▒███ ███▒▒███▒▒███▒▒███  ███▒▒███
- ▒███ ▒███▒███ ▒███▒▒█████   ▒███     ▒███ ▒███▒███ ▒███ ▒███ ▒███ ▒███████ 
- ▒███ ▒███▒███ ▒███ ▒▒▒▒███  ▒███ ███ ▒███ ▒███▒███ ▒███ ▒███ ▒███ ▒███▒▒▒  
- ▒███████ ▒▒██████  ██████   ▒▒█████  ▒███████ ▒▒██████  ████ █████▒▒██████ 
- ▒███▒▒▒   ▒▒▒▒▒▒  ▒▒▒▒▒▒     ▒▒▒▒▒   ▒███▒▒▒   ▒▒▒▒▒▒  ▒▒▒▒ ▒▒▒▒▒  ▒▒▒▒▒▒  
- ▒███                                 ▒███                                  
- █████                                █████                                 
-▒▒▒▒▒                                ▒▒▒▒▒                                  ]],
-        },
-        sections = {
-          {
-            { section = 'header' },
-            { section = 'keys', gap = 1, padding = 1 },
-            { section = 'startup' },
-          },
-        },
-      },
-    },
-  },
-  {
-    'HiPhish/rainbow-delimiters.nvim',
-    event = 'BufReadPre',
-    main = 'rainbow-delimiters.setup',
-  },
-  {
-    'lukas-reineke/virt-column.nvim',
-    event = 'BufReadPre',
-    opts = {
-      char = '⋮', -- "|", "", "┇", "∶", "∷", "║", "", "󰮾",
-      virtcolumn = '120',
-    },
-  },
-  {
-    'brenoprata10/nvim-highlight-colors',
-    event = 'BufReadPre',
-    config = function()
-      require('nvim-highlight-colors').setup {}
-    end,
-  },
-  {
-    'tummetott/reticle.nvim',
-    event = 'BufReadPre',
-    opts = {
-      always_highlight_number = true,
-    },
-  },
   {
     'folke/noice.nvim',
     event = 'VeryLazy',
@@ -113,7 +44,6 @@ return {
             input = { conceal = enable_conceal },
           },
         },
-
         routes = {
           {
             filter = {
@@ -127,10 +57,12 @@ return {
             view = 'mini',
           },
         },
+
         messages = {
           enabled = true,
           view = 'mini',
         },
+
         lsp = {
           hover = { enabled = false },
           signature = { enabled = false },
@@ -149,14 +81,54 @@ return {
       { '<leader>nd', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All', },
       { '<leader>nm', ':messages <CR>', desc = 'Messages', },
     },
-    config = function(_, opts)
-      -- HACK: noice shows messages from before it was enabled,
-      -- but this is not ideal when Lazy is installing plugins,
-      -- so clear the messages in this case.
-      if vim.o.filetype == 'lazy' then
-        vim.cmd [[messages clear]]
-      end
-      require('noice').setup(opts)
+    -- config = function(_, opts)
+    --   -- HACK: noice shows messages from before it was enabled,
+    --   -- but this is not ideal when Lazy is installing plugins,
+    --   -- so clear the messages in this case.
+    --   if vim.o.filetype == 'lazy' then
+    --     vim.cmd [[messages clear]]
+    --   end
+    --   require('noice').setup(opts)
+    -- end,
+  },
+
+  {
+    'j-hui/fidget.nvim',
+    event = 'LspAttach',
+    opts = {
+      notification = {
+        window = {
+          winblend = 0,
+        },
+      },
+    },
+  },
+
+  {
+    'HiPhish/rainbow-delimiters.nvim',
+    event = 'BufReadPre',
+  },
+
+  {
+    'brenoprata10/nvim-highlight-colors',
+    event = 'BufReadPre',
+    config = function()
+      require('nvim-highlight-colors').setup {}
     end,
+  },
+
+  {
+    'lukas-reineke/virt-column.nvim',
+    event = 'BufReadPre',
+    opts = {
+      char = '⋮', -- "|", "", "┇", "∶", "∷", "║", "", "󰮾",
+      virtcolumn = '120',
+    },
+  },
+
+  {
+    'tummetott/reticle.nvim',
+    event = 'BufReadPre',
+    opts = { always_highlight_number = true },
   },
 }

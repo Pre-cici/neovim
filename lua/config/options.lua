@@ -17,7 +17,6 @@ local opt = vim.opt
 opt.cmdheight = 0 -- Hide command line unless needed.
 opt.number = true
 opt.relativenumber = true
-
 opt.signcolumn = 'yes'
 -- opt.statuscolumn = "%C%l %s"
 opt.cursorline = true
@@ -101,7 +100,7 @@ opt.conceallevel = 2
 opt.pumheight = 10
 opt.pumblend = 10
 opt.shortmess:append { W = true, I = true, c = true, C = true }
-opt.jumpoptions = 'view'
+opt.jumpoptions = 'stack'
 opt.smoothscroll = true
 opt.spelllang = { 'en' }
 opt.virtualedit = 'block'

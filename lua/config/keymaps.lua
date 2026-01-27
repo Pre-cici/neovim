@@ -3,6 +3,7 @@ local keymap = vim.keymap
 keymap.set('n', '<leader>fs', '<cmd>source %<CR>', { desc = 'Source current file' })
 
 keymap.set('i', 'jj', '<ESC>')
+keymap.set('i', 'jk', '<ESC>')
 
 keymap.set('n', 'q', '<nop>', { desc = 'Disable macro recording' })
 keymap.set('n', 'Q', 'q', { desc = 'Record macro' })
@@ -45,12 +46,8 @@ keymap.set('n', '<S-h>', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
 keymap.set('n', '<S-l>', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
 keymap.set("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 keymap.set("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-keymap.set("n", "<leader>bd", function()
-  Snacks.bufdelete()
-end, { desc = "Delete Buffer" })
-keymap.set("n", "<leader>bo", function()
-  Snacks.bufdelete.other()
-end, { desc = "Delete Other Buffers" })
+keymap.set("n", "<leader>bd", function() Snacks.bufdelete() end, { desc = "Delete Buffer" })
+keymap.set("n", "<leader>bo", function() Snacks.bufdelete.other() end, { desc = "Delete Other Buffers" })
 keymap.set("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
 
 
@@ -93,14 +90,13 @@ keymap.set('i', '.', '.<c-g>u')
 keymap.set('i', ';', ';<c-g>u')
 
 -- file
-keymap.set({ 'i', 'x', 'n', 's' }, '<C-s>', '<cmd>w<cr><esc>', { desc = 'Save File' })
-keymap.set('n', '<leader>fw', '<cmd>write ++p<cr>', { desc = 'Save (mkdir -p)' }) -- create parent dirs if needed :contentReference[oaicite:2]{index=2}
+keymap.set('n', '<leader>fw', '<cmd>w<cr>', { desc = 'Save Flie' }) -- create parent dirs if needed :contentReference[oaicite:2]{index=2}
 keymap.set('n', '<leader>fn', function()
   local base = vim.fn.expand '%:p:h'
   if base == '' then
     base = vim.uv.cwd()
   end
-
+  
   vim.ui.input({ prompt = 'New file: ', default = base .. '/' }, function(path)
     if not path or path == '' then
       return
@@ -109,14 +105,9 @@ keymap.set('n', '<leader>fn', function()
   end)
 end, { desc = 'New File' })
 
--- select all
-keymap.set('n', '<leader>fA', 'ggVG', { desc = 'Select All' })
-
 -- keywordprg
 keymap.set('n', '<leader>K', '<cmd>norm! K<cr>', { desc = 'Keywordprg' })
-keymap.set('n', 'K', function()
-  vim.lsp.buf.hover { border = 'rounded' }
-end, { desc = 'LSP Hover' })
+keymap.set('n', 'K', function() vim.lsp.buf.hover { border = 'rounded' } end, { desc = 'LSP Hover' })
 
 -- commenting
 keymap.set('n', 'gcO', 'o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = 'Add Comment Below' })
@@ -140,29 +131,11 @@ end
 
 -- lazygit
 if vim.fn.executable 'lazygit' == 1 then
-  keymap.set('n', '<leader>gg', function()
-    Snacks.lazygit { cwd = get_root(0) }
-  end, { desc = 'Lazygit (Root Dir)' })
-  keymap.set('n', '<leader>gG', function()
-    Snacks.lazygit()
-  end, { desc = 'Lazygit (cwd)' })
+  keymap.set('n', '<leader>gg', function() Snacks.lazygit { cwd = get_root(0) } end, { desc = 'Lazygit (Root Dir)' })
+  keymap.set('n', '<leader>gG', function() Snacks.lazygit() end, { desc = 'Lazygit (cwd)' })
 end
 
 -- TODO: location list / quickfix list / diagnostics
-keymap.set("n", "<leader>cl", function()
-  local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-end, { desc = "Location List" })
-
-keymap.set("n", "<leader>cq", function()
-  local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
-end, { desc = "Quickfix List" })
-
 keymap.set("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
 keymap.set("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 
@@ -184,23 +157,3 @@ keymap.set("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
 keymap.set("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
 keymap.set("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 
--- TODO:  toggle options
-
--- toggle options
--- LazyVim.format.snacks_toggle():map("<leader>uf")
--- LazyVim.format.snacks_toggle(true):map("<leader>uF")
--- Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
--- Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
--- Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>uL")
--- Snacks.toggle.diagnostics():map("<leader>ud")
--- Snacks.toggle.line_number():map("<leader>ul")
--- Snacks.toggle.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2, name = "Conceal Level" }):map("<leader>uc")
--- Snacks.toggle.option("showtabline", { off = 0, on = vim.o.showtabline > 0 and vim.o.showtabline or 2, name = "Tabline" }):map("<leader>uA")
--- Snacks.toggle.treesitter():map("<leader>uT")
--- Snacks.toggle.option("background", { off = "light", on = "dark" , name = "Dark Background" }):map("<leader>ub")
--- Snacks.toggle.dim():map("<leader>uD")
--- Snacks.toggle.animate():map("<leader>ua")
--- Snacks.toggle.indent():map("<leader>ug")
--- Snacks.toggle.scroll():map("<leader>uS")
--- Snacks.toggle.profiler():map("<leader>dpp")
--- Snacks.toggle.profiler_highlights():map("<leader>dph")
