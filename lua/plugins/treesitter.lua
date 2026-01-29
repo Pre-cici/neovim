@@ -9,7 +9,7 @@ return {
       ensure_installed = {
         'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown',
         'markdown_inline', 'query', 'vim', 'vimdoc', 'python',
-        'json', 'yaml', "ninja", "rst",
+        'json', 'yaml', "ninja", "rst"
       },
       auto_install = true,
       highlight = {

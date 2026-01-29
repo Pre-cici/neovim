@@ -9,7 +9,8 @@ return {
       toggle = { enabled = true },
       picker = { enabled = true },
       laztgit = { enabled = true },
-      bufdelete = {enabled = true },
+      bufdelete = { enabled = true },
+      image = { enabled = true },
 
       -- ui
       words = { enabled = true },
@@ -18,10 +19,10 @@ return {
       scope = { enabled = true },
       scroll = { enabled = true },
       notifier = { enabled = false },
+      input = { enabled = true },
     },
   },
 }
-
 
 -- TODO:  toggle options
 
@@ -43,4 +44,3 @@ return {
 -- Snacks.toggle.scroll():map("<leader>uS")
 -- Snacks.toggle.profiler():map("<leader>dpp")
 -- Snacks.toggle.profiler_highlights():map("<leader>dph")
-

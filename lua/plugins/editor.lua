@@ -18,8 +18,7 @@ return {
     ---@type Flash.Config
     opts = {
       label = {
-        rainbow = { enabled = true, shade = 9,
-        },
+        rainbow = { enabled = true, shade = 9 },
       },
     },
     -- stylua: ignore
@@ -193,7 +192,7 @@ return {
     },
   },
   {
-    "stevearc/aerial.nvim",
+    'stevearc/aerial.nvim',
     event = { 'BufReadPre', 'BufNewFile' },
     opts = function()
       -- local icons = vim.deepcopy(LazyVim.config.icons.kinds)
@@ -211,15 +210,15 @@ return {
       -- end
 
       local opts = {
-        attach_mode = "global",
-        backends = { "lsp", "treesitter", "markdown", "man" },
+        attach_mode = 'global',
+        backends = { 'lsp', 'treesitter', 'markdown', 'man' },
         show_guides = true,
         layout = {
           resize_to_content = false,
           win_opts = {
-            winhl = "Normal:NormalFloat,FloatBorder:NormalFloat,SignColumn:SignColumnSB",
-            signcolumn = "yes",
-            statuscolumn = " ",
+            winhl = 'Normal:NormalFloat,FloatBorder:NormalFloat,SignColumn:SignColumnSB',
+            signcolumn = 'yes',
+            statuscolumn = ' ',
           },
         },
         -- icons = icons,
@@ -236,7 +235,7 @@ return {
       return opts
     end,
     keys = {
-      { "<leader>xs", "<cmd>AerialToggle<cr>", desc = "Aerial (Symbols)" },
+      { '<leader>xs', '<cmd>AerialToggle<cr>', desc = 'Aerial (Symbols)' },
     },
   },
 
@@ -301,4 +300,6 @@ return {
       { '<c-\\>', '<cmd>TmuxNavigatePrevious<cr>' },
     },
   },
+
+  { 'nmac427/guess-indent.nvim', event = { 'BufReadPre', 'BufNewFile' } },
 }

@@ -26,6 +26,10 @@ tags: [test, markdown, render]
 
 ---
 
+![test img](./test.png)
+
+
+
 ## 2. 标题层级
 
 ### 2.1 三级标题

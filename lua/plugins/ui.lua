@@ -74,7 +74,6 @@ return {
     end,
     -- stylua: ignore
     keys = {
-      { '<leader>n', '', desc = 'notice' },
       { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
       { '<leader>nl', function() require('noice').cmd 'last' end, desc = 'Noice Last Message', },
       { '<leader>nn', function() require('noice').cmd 'all' end, desc = 'Noice All', },
@@ -129,6 +128,16 @@ return {
   {
     'tummetott/reticle.nvim',
     event = 'BufReadPre',
-    opts = { always_highlight_number = true },
+    opts = {
+      always_highlight_number = true,
+      ignore = {
+        cursorline = {
+          'Trouble',
+          'snacks_picker_list',
+          'snacks_picker_input',
+        },
+        cursorcolumn = {},
+      },
+    },
   },
 }

@@ -27,7 +27,13 @@ opt.showmode = false
 opt.ruler = false
 opt.termguicolors = true
 opt.list = true
-opt.listchars = { trail = '·' }
+opt.listchars = {
+  trail = "·",
+  tab = "».",     -- Tab 显示成 »·（你也可以用 "→ "）
+  -- extends = "›",
+  -- precedes = "‹",
+  -- nbsp = "␣",
+}
 opt.winborder = vim.g.bordered and 'rounded' or 'none'
 
 -- Mouse

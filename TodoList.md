@@ -1,5 +1,0 @@
-- [ ] oil
-- [ ] picker
-- [ ] overseer
-- [ ] jupyter notebook
-- [ ] project
