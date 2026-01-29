@@ -8,7 +8,7 @@ return {
       quickfile = { enabled = true },
       toggle = { enabled = true },
       picker = { enabled = true },
-      laztgit = { enabled = true },
+      lazygit = { enabled = true },
       bufdelete = { enabled = true },
       image = { enabled = true },
 
