@@ -28,7 +28,7 @@ return {
       { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
       { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-      { "<c-space>", mode = { "n", "o", "x" }, function() require("flash").treesitter({ actions = { ["<c-space>"] = "next", ["<BS>"] = "prev" } }) end, 
+      { "<c-space>", mode = { "n", "o", "x" }, function() require("flash").treesitter({ actions = { ["<c-space>"] = "next", ["<BS>"] = "prev" } }) end,
         desc = "Treesitter Incremental Selection" },
     },
   },
@@ -56,6 +56,8 @@ return {
           { '<leader>x', group = 'diagnostics/quickfix' },
           { '<leader>n', group = 'notification' },
           { "<leader>o", group = "overseer" } ,
+
+
 
           { '[', group = 'prev' },
           { ']', group = 'next' },
@@ -165,14 +167,14 @@ return {
         -- Navigation
         map('n', ']c', function() if vim.wo.diff then vim.cmd.normal { ']c', bang = true } else gitsigns.nav_hunk 'next' end end,
           { desc = 'Jump to next git [c]hange' })
-        map('n', '[c', function() if vim.wo.diff then vim.cmd.normal { '[c', bang = true } else gitsigns.nav_hunk 'prev' end end, 
+        map('n', '[c', function() if vim.wo.diff then vim.cmd.normal { '[c', bang = true } else gitsigns.nav_hunk 'prev' end end,
           { desc = 'Jump to previous git [c]hange' })
 
         -- Actions
         -- visual mode
         map('v', '<leader>gs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end,
           { desc = 'git [s]tage hunk' })
-        map('v', '<leader>gr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, 
+        map('v', '<leader>gr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end,
           { desc = 'git [r]eset hunk' })
         -- normal mode
         map('n', '<leader>gs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
@@ -189,81 +191,6 @@ return {
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
         map('n', '<leader>tD', gitsigns.preview_hunk_inline, { desc = '[T]oggle git show [D]eleted' })
       end,
-    },
-  },
-  {
-    'stevearc/aerial.nvim',
-    event = { 'BufReadPre', 'BufNewFile' },
-    opts = function()
-      -- local icons = vim.deepcopy(LazyVim.config.icons.kinds)
-
-      -- HACK: fix lua's weird choice for `Package` for control
-      -- structures like if/else/for/etc.
-      -- icons.lua = { Package = icons.Control }
-
-      ---@type table<string, string[]>|false
-      -- local filter_kind = false
-      -- if LazyVim.config.kind_filter then
-      --   filter_kind = assert(vim.deepcopy(LazyVim.config.kind_filter))
-      --   filter_kind._ = filter_kind.default
-      --   filter_kind.default = nil
-      -- end
-
-      local opts = {
-        attach_mode = 'global',
-        backends = { 'lsp', 'treesitter', 'markdown', 'man' },
-        show_guides = true,
-        layout = {
-          resize_to_content = false,
-          win_opts = {
-            winhl = 'Normal:NormalFloat,FloatBorder:NormalFloat,SignColumn:SignColumnSB',
-            signcolumn = 'yes',
-            statuscolumn = ' ',
-          },
-        },
-        -- icons = icons,
-        -- filter_kind = filter_kind,
-        
-        -- stylua: ignore
-        guides = {
-          mid_item   = "├╴",
-          last_item  = "└╴",
-          nested_top = "│ ",
-          whitespace = "  ",
-        },
-      }
-      return opts
-    end,
-    keys = {
-      { '<leader>xs', '<cmd>AerialToggle<cr>', desc = 'Aerial (Symbols)' },
-    },
-  },
-
-  -- better diagnostics list and others
-  {
-    'folke/trouble.nvim',
-    cmd = { 'Trouble' },
-    opts = {
-      modes = {
-        lsp = {
-          win = { position = 'right' },
-        },
-      },
-    },
-    -- stylua: ignore
-    keys = {
-      { '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Diagnostics (Trouble)' },
-      { '<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', desc = 'Buffer Diagnostics (Trouble)' },
-      { '<leader>xs', '<cmd>Trouble symbols toggle<cr>', desc = 'Symbols (Trouble)' },
-      { '<leader>xS', '<cmd>Trouble lsp toggle<cr>', desc = 'LSP references/definitions/... (Trouble)' },
-      { '<leader>xl', '<cmd>Trouble loclist toggle<cr>', desc = 'Location List (Trouble)' },
-      { '<leader>xq', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' },
-      { '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
-      { '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
-      { '[q', function() if require('trouble').is_open() then require('trouble').prev { skip_groups = true, jump = true } else local ok, err = pcall(vim.cmd.cprev) if not ok then vim.notify(err, vim.log.levels.ERROR) end end end, 
-        desc = 'Previous Trouble/Quickfix Item', },
-      { ']q', function() if require('trouble').is_open() then require('trouble').next { skip_groups = true, jump = true } else local ok, err = pcall(vim.cmd.cnext) if not ok then vim.notify(err, vim.log.levels.ERROR) end end end,
-        desc = 'Next Trouble/Quickfix Item', },
     },
   },
 

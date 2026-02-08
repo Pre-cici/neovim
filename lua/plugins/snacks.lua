@@ -10,7 +10,7 @@ return {
       picker = { enabled = true },
       laztgit = { enabled = true },
       bufdelete = { enabled = true },
-      image = { enabled = true },
+      -- image = { enabled = true },
 
       -- ui
       words = { enabled = true },

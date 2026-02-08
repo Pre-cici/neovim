@@ -73,7 +73,7 @@ opt.showbreak = '↳ '
 -- Timing
 opt.updatetime = 200
 opt.timeout = true
-opt.timeoutlen = vim.g.vscode and 500 or 500
+opt.timeoutlen = 500
 opt.ttimeout = true
 opt.ttimeoutlen = 30
 

@@ -64,9 +64,6 @@ local schemes = {
         color_overrides = {},
         custom_highlights = function(colors)
           return {
-            -- Comment = { fg = colors.flamingo },
-            -- TabLineSel = { bg = colors.pink },
-            -- CmpBorder = { fg = colors.surface2 },
             Pmenu = { bg = colors.none },
             BlinkCmpMenuBorder = { bg = colors.none },
             DropBarMenuHoverIcon = { bg = colors.none, fg = colors.flamingo, reverse = false },
@@ -76,11 +73,7 @@ local schemes = {
         end,
         default_integrations = true,
         auto_integrations = true,
-        integrations = {
-          -- In your catppuccin config (integrations):
-          --
-          -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
-        },
+        integrations = {},
       }
       -- setup must be called before loading
       vim.cmd.colorscheme 'catppuccin'

@@ -35,6 +35,7 @@ require('lazy').setup {
     { import = 'plugins.debug' },
     { import = 'plugins.markdown' },
     { import = 'plugins.python' },
+    { import = 'plugins.ai' },
   },
   -- highlight-end
   -- Configure any other settings here. See the documentation for more details.
