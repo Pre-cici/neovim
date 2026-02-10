@@ -5,14 +5,20 @@ return {
     dependencies = {
       { 'nvim-mini/mini.icons', opts = {} },
       'benomahony/oil-git.nvim',
-      'JezerM/oil-lsp-diagnostics.nvim',
+      {
+        'JezerM/oil-lsp-diagnostics.nvim',
+        opts = {
+          count = false,
+          parent_dirs = false,
+        },
+      },
     },
     cmd = 'Oil',
     keys = {
       { '<leader>e', ':Oil<CR>' },
     },
     opts = {
-      default_file_explorer = true,
+      -- default_file_explorer = true,
       -- stylua: ignore
       keymaps = {
         ['<C-l>'] = 'actions.select',
@@ -59,7 +65,6 @@ return {
     },
   },
 
-
   --   {
   --   "zeioth/project.nvim",
   --   event = "VimEnter",
@@ -94,5 +99,4 @@ return {
   --   },
   --   config = function(_, opts) require("project_nvim").setup(opts) end,
   -- },
-
 }

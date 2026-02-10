@@ -37,10 +37,10 @@ require('lazy').setup {
     { import = 'plugins.python' },
     { import = 'plugins.ai' },
   },
-  -- highlight-end
+
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
-
+  
   -- automatically check for plugin updates
-  checker = { enabled = true },
+  checker = { enabled = true, notify = false},
 }

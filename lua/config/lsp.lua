@@ -1,8 +1,7 @@
-vim.lsp.enable('lua_ls')
-vim.lsp.enable('stylua')
-vim.lsp.enable('ruff')
-vim.lsp.enable('pyright')
-vim.lsp.enable('marksman')
+vim.lsp.enable 'lua_ls'
+vim.lsp.enable 'ruff'
+vim.lsp.enable 'pyright'
+vim.lsp.enable 'marksman'
 
 vim.diagnostic.config {
   severity_sort = true,
@@ -17,7 +16,8 @@ vim.diagnostic.config {
     },
   },
   virtual_text = {
-    source = 'if_many',
+    -- source = 'if_many',
+    source = true,
     spacing = 2,
     format = function(diagnostic)
       local diagnostic_message = {
@@ -30,7 +30,6 @@ vim.diagnostic.config {
     end,
   },
 }
-
 
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
@@ -147,4 +146,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
   end,
 })
-
