@@ -226,7 +226,7 @@ return {
           return venv_selector_name() ~= nil
         end,
         provider = function()
-          return '  ' .. '󰆧 ' .. venv_selector_name()
+          return '  ' .. ' ' .. venv_selector_name()
         end,
         on_click = {
           name = 'heirline_venv_selector',
@@ -384,7 +384,6 @@ return {
           -- },
           margin = { vertical = 1, horizontal = 1 },
         },
-        hide = { cursorline = true },
 
         render = function(props)
           local buf = props.buf

@@ -1,16 +1,16 @@
-local colorscheme = 'catppuccin'
+local colorscheme = "catppuccin"
 local schemes = {
   catppuccin = {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    "catppuccin/nvim",
+    name = "catppuccin",
     lazy = false,
     priority = 1000,
     config = function()
-      require('catppuccin').setup {
-        flavour = 'macchiato', -- latte, frappe, macchiato, mocha
+      require("catppuccin").setup({
+        flavour = "macchiato", -- latte, frappe, macchiato, mocha
         background = { -- :h background
-          light = 'latte',
-          dark = 'mocha',
+          light = "latte",
+          dark = "mocha",
         },
         transparent_background = vim.g.transparent, -- disables setting the background color.
         float = {
@@ -21,15 +21,15 @@ local schemes = {
         term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
         dim_inactive = {
           enabled = false, -- dims the background color of inactive window
-          shade = 'dark',
+          shade = "dark",
           percentage = 0.15, -- percentage of the shade to apply to the inactive window
         },
         no_italic = false, -- Force no italic
         no_bold = false, -- Force no bold
         no_underline = false, -- Force no underline
         styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-          comments = { 'italic' }, -- Change the style of comments
-          conditionals = { 'italic' },
+          comments = { "italic" }, -- Change the style of comments
+          conditionals = { "italic" },
           loops = {},
           functions = {},
           keywords = {},
@@ -44,18 +44,18 @@ local schemes = {
         },
         lsp_styles = { -- Handles the style of specific lsp hl groups (see `:h lsp-highlight`).
           virtual_text = {
-            errors = { 'italic' },
-            hints = { 'italic' },
-            warnings = { 'italic' },
-            information = { 'italic' },
-            ok = { 'italic' },
+            errors = { "italic" },
+            hints = { "italic" },
+            warnings = { "italic" },
+            information = { "italic" },
+            ok = { "italic" },
           },
           underlines = {
-            errors = { 'underline' },
-            hints = { 'underline' },
-            warnings = { 'underline' },
-            information = { 'underline' },
-            ok = { 'underline' },
+            errors = { "underline" },
+            hints = { "underline" },
+            warnings = { "underline" },
+            information = { "underline" },
+            ok = { "underline" },
           },
           inlay_hints = {
             background = false,
@@ -69,62 +69,63 @@ local schemes = {
             DropBarMenuHoverIcon = { bg = colors.none, fg = colors.flamingo, reverse = false },
             LazyNormal = { bg = colors.mantle, fg = colors.text },
             RenderMarkdownCode = { bg = colors.none },
+
           }
         end,
         default_integrations = true,
         auto_integrations = true,
         integrations = {},
-      }
+      })
       -- setup must be called before loading
-      vim.cmd.colorscheme 'catppuccin'
+      vim.cmd.colorscheme("catppuccin")
     end,
   },
 
   tokyonight = {
-    'folke/tokyonight.nvim',
+    "folke/tokyonight.nvim",
     lazy = false,
     priority = 1000,
     config = function()
-      require('tokyonight').setup {
+      require("tokyonight").setup({
         ---@diagnostic disable-next-line: missing-fields
-        style = 'night', -- "storm", "moon", "night", "day"
-      }
-      vim.cmd.colorscheme 'tokyonight'
+        style = "night", -- "storm", "moon", "night", "day"
+      })
+      vim.cmd.colorscheme("tokyonight")
     end,
   },
 
   everforest = {
-    'sainnhe/everforest',
+    "sainnhe/everforest",
     lazy = false,
     priority = 1000,
     config = function()
       vim.g.everforest_enable_italic = true
-      vim.cmd.colorscheme 'everforest'
+      vim.cmd.colorscheme("everforest")
     end,
   },
 
-  ['gruvbox-material'] = {
-    'sainnhe/gruvbox-material',
+  ["gruvbox-material"] = {
+    "sainnhe/gruvbox-material",
     lazy = false,
     priority = 1000,
     config = function()
       vim.g.gruvbox_material_enable_italic = true
-      vim.cmd.colorscheme 'gruvbox-material'
+      vim.cmd.colorscheme("gruvbox-material")
     end,
   },
 
   kanagawa = {
-    'rebelot/kanagawa.nvim',
+    "rebelot/kanagawa.nvim",
     lazy = false,
     priority = 1000,
     config = function()
-      require('kanagawa').setup {
+      require("kanagawa").setup({
         background = {
-          dark = 'wave', -- "wave", "dragon", "lotus"
-          light = 'lotus',
+          dark = "wave", -- "wave", "dragon", "lotus"
+          light = "lotus",
         },
-      }
-      vim.cmd.colorscheme 'kanagawa'
+      })
+      vim.cmd.colorscheme("kanagawa")
     end,
   },
 }

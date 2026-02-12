@@ -13,6 +13,7 @@ return {
         'snacks.nvim',
         'catppuccin',
         'nvim-dap-ui',
+        "overseer.nvim",
 
         { path = 'nvim-dap', mods = { 'dap' } },
         { path = 'nvim-nio', mods = { 'nio' } },

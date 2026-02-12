@@ -1,6 +1,6 @@
 return {
   {
-    'folke/snacks.nvim',
+    "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
     opts = {
@@ -10,7 +10,7 @@ return {
       picker = { enabled = true },
       laztgit = { enabled = true },
       bufdelete = { enabled = true },
-      -- image = { enabled = true },
+      image = { enabled = false },
 
       -- ui
       words = { enabled = true },
