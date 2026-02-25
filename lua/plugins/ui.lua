@@ -1,20 +1,20 @@
 return {
   {
-    'folke/snacks.nvim',
+    "folke/snacks.nvim",
     opts = {
       indent = {
-        indent = { char = '' },
+        indent = { char = "" },
         animate = { enabled = false },
-        scope = { char = '│', only_current = true },
+        scope = { char = "│", only_current = true },
         chunk = {
           enabled = true,
           only_current = true,
           char = {
-            corner_top = '╭',
-            corner_bottom = '╰',
-            horizontal = '─',
-            vertical = '│',
-            arrow = '─',
+            corner_top = "╭",
+            corner_bottom = "╰",
+            horizontal = "─",
+            vertical = "│",
+            arrow = "─",
           },
         },
       },
@@ -23,19 +23,19 @@ return {
   },
 
   {
-    'folke/noice.nvim',
-    event = 'VeryLazy',
+    "folke/noice.nvim",
+    event = "VeryLazy",
     dependencies = {
-      'MunifTanjim/nui.nvim',
-      'rcarriga/nvim-notify',
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
     },
     opts = function()
       local enable_conceal = false -- Hide command text if true
       return {
         cmdline = {
-          view = 'cmdline', -- The kind of popup used for :
+          view = "cmdline", -- The kind of popup used for :
           format = {
-            cmdline = { icon = '', conceal = enable_conceal },
+            cmdline = { icon = "", conceal = enable_conceal },
             search_down = { conceal = enable_conceal },
             search_up = { conceal = enable_conceal },
             filter = { conceal = enable_conceal },
@@ -47,20 +47,20 @@ return {
         routes = {
           {
             filter = {
-              event = 'msg_show',
+              event = "msg_show",
               any = {
-                { find = '%d+L, %d+B' },
-                { find = '; after #%d+' },
-                { find = '; before #%d+' },
+                { find = "%d+L, %d+B" },
+                { find = "; after #%d+" },
+                { find = "; before #%d+" },
               },
             },
-            view = 'mini',
+            view = "mini",
           },
         },
 
         messages = {
           enabled = true,
-          view = 'mini',
+          view = "mini",
         },
 
         lsp = {
@@ -92,8 +92,8 @@ return {
   },
 
   {
-    'j-hui/fidget.nvim',
-    event = 'LspAttach',
+    "j-hui/fidget.nvim",
+    event = "LspAttach",
     opts = {
       notification = {
         window = {
@@ -104,37 +104,37 @@ return {
   },
 
   {
-    'HiPhish/rainbow-delimiters.nvim',
-    event = 'BufReadPre',
+    "HiPhish/rainbow-delimiters.nvim",
+    event = "BufReadPre",
   },
 
   {
-    'brenoprata10/nvim-highlight-colors',
-    event = 'BufReadPre',
+    "brenoprata10/nvim-highlight-colors",
+    event = "BufReadPre",
     config = function()
-      require('nvim-highlight-colors').setup {}
+      require("nvim-highlight-colors").setup({})
     end,
   },
 
   {
-    'lukas-reineke/virt-column.nvim',
-    event = 'BufReadPre',
+    "lukas-reineke/virt-column.nvim",
+    event = "BufReadPre",
     opts = {
-      char = '⋮', -- "|", "", "┇", "∶", "∷", "║", "", "󰮾",
-      virtcolumn = '120',
+      char = "⋮", -- "|", "", "┇", "∶", "∷", "║", "", "󰮾",
+      virtcolumn = "120",
     },
   },
 
   {
-    'tummetott/reticle.nvim',
-    event = 'BufReadPre',
+    "tummetott/reticle.nvim",
+    event = "BufReadPre",
     opts = {
       always_highlight_number = true,
       ignore = {
         cursorline = {
-          'Trouble',
-          'snacks_picker_list',
-          'snacks_picker_input',
+          "Trouble",
+          "snacks_picker_list",
+          "snacks_picker_input",
         },
         cursorcolumn = {},
       },

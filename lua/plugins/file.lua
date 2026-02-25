@@ -10,6 +10,22 @@ function _G.get_oil_winbar()
   end
 end
 
+-- Find project root from a starting directory
+local function find_project_root(start_dir)
+  local markers = {
+    ".git",
+    "pyproject.toml",
+    "setup.py",
+    "setup.cfg",
+    "package.json",
+    "go.mod",
+    "Cargo.toml",
+    "Makefile",
+  }
+
+  local found = vim.fs.find(markers, { path = start_dir, upward = true })[1]
+  return found and vim.fs.dirname(found) or start_dir
+end
 
 return {
   {
@@ -43,19 +59,41 @@ return {
         ['H'] = 'actions.parent',
         ['<BS>'] = 'actions.parent',
         ['q'] = 'actions.close',
+
         ['<leader>e'] = 'actions.close',
-        ['<C-r>'] = 'actions.refresh',
-        ['<leader>y'] = 'actions.yank_entry',
+        ['<leader>r'] = 'actions.refresh',
+
+        ['<leader>y'] = 'actions.yank_entry', -- yank full path
+
+        ["gp"] = "actions.preview",
+        ["<A-p>"] = "actions.preview",
         ["."] = { "actions.toggle_hidden", mode = "n" },
         ["g\\"] = { "actions.toggle_trash", mode = "n" },
-        ["gp"] = "actions.preview",
+
         ["gc"] = { "actions.open_cwd", mode = "n" },
         ["`"] = { "actions.tcd", mode = "n" }, -- different tab path
-        ["~"] = { "actions.cd", mode = "n" },
+        ["~"] = {
+          function()
+            local oil = require("oil")
+            local dir = oil.get_current_dir()
+            if not dir then
+              return
+            end
+            local root = find_project_root(dir)
+            -- 1) Change Neovim cwd to project root
+            vim.cmd("cd " .. vim.fn.fnameescape(root))
+            -- oil.open(root)
+          end,
+          desc = "Oil: go to project root",
+          mode = "n",
+        },
+
         ['-'] = { 'actions.select', opts = { horizontal = true } },
-        ['|'] = { 'actions.select', opts = { vertical = true } },
-        ['gt'] = { 'actions.select', opts = { horizontal = true } },
+        ['\\'] = { 'actions.select', opts = { vertical = true } },
+        ['gt'] = { 'actions.select', opts = { tab = true } },
+
         ["gs"] = { "actions.change_sort", mode = "n" },
+
         ["gd"] = {
           desc = "Toggle file detail view",
           callback = function()

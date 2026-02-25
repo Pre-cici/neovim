@@ -366,6 +366,7 @@ return {
     -- stylua: ignore
     keys = {
       { "<leader>fy", function() Snacks.picker.yanky() end, mode = { "n", "x" }, desc = "Open Yank History", },
+
       { "y", "<Plug>(YankyYank)", mode = { "n", "x" }, desc = "Yank Text" },
       { "p", "<Plug>(YankyPutAfter)", mode = { "n", "x" }, desc = "Put Text After Cursor" },
       { "P", "<Plug>(YankyPutBefore)", mode = { "n", "x" }, desc = "Put Text Before Cursor" },
@@ -383,6 +384,13 @@ return {
       { "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)", desc = "Put Before and Indent Left" },
       { "=p", "<Plug>(YankyPutAfterFilter)", desc = "Put After Applying a Filter" },
       { "=P", "<Plug>(YankyPutBeforeFilter)", desc = "Put Before Applying a Filter" },
+    },
+  },
+  {
+    "kawre/neotab.nvim",
+    event = "InsertEnter",
+    opts = {
+      -- configuration goes here
     },
   },
 }

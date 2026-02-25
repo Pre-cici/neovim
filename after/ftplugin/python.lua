@@ -35,15 +35,12 @@ vim.keymap.set("v", "gcu", function()
   vim.api.nvim_buf_set_lines(0, start_line - 1, start_line - 1, false, { "'''" })
 end, { buffer = true, desc = "Convert # comments to ''' block" })
 
-
 -- Run whole file with SnipRun, passing extra argv.
 
 local function sniprun_file_with_argv()
-  if vim.bo.modified then
-    vim.cmd("write")
-  end
-
   -- File completion: Tab completes paths
+  local view = vim.fn.winsaveview()
+
   local args = vim.fn.input({
     prompt = "SnipRun argv: ",
     completion = "file",
@@ -54,6 +51,8 @@ local function sniprun_file_with_argv()
   else
     vim.cmd("%SnipRun")
   end
+
+  vim.fn.winrestview(view)
 end
 
 vim.keymap.set("n", "<leader>ca", sniprun_file_with_argv, {

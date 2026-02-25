@@ -36,6 +36,7 @@ require('lazy').setup {
     { import = 'plugins.markdown' },
     { import = 'plugins.python' },
     { import = 'plugins.ai' },
+    { import = 'plugins.leetcode' },
   },
 
   -- Configure any other settings here. See the documentation for more details.
