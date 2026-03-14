@@ -388,9 +388,21 @@ return {
   },
   {
     "kawre/neotab.nvim",
-    event = "InsertEnter",
+    event = { "InsertEnter", "CmdlineEnter" },
     opts = {
       -- configuration goes here
     },
   },
+
+  -- {
+  --   "jalvesaq/zotcite",
+  --   dependencies = {
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  --   config = function()
+  --     require("zotcite").setup({
+  --       -- your options here (see doc/zotcite.txt)
+  --     })
+  --   end,
+  -- },
 }

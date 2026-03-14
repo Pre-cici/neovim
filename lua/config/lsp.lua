@@ -2,6 +2,7 @@ vim.lsp.enable("lua_ls")
 vim.lsp.enable("ruff")
 vim.lsp.enable("pyright")
 vim.lsp.enable("marksman")
+vim.lsp.enable("clangd")
 
 vim.diagnostic.config({
   severity_sort = true,

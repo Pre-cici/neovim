@@ -34,13 +34,15 @@ return {
         local function toggle_visual(style_key)
           return "<Esc>gv<Cmd>lua require'markdown.inline'.toggle_emphasis_visual'" .. style_key .. "'<CR>"
         end
+
         map("x", "<C-b>", toggle_visual("b"), opts) -- bold
         map("x", "<C-i>", toggle_visual("i"), opts) -- italic
 
         -- Strikethrough (~~ ~~)
         map("x", "<C-s>", toggle_visual("s"), opts) -- visual: toggle strikethrough
 
-        map("x", "<C-c>", toggle_visual("c"), opts) -- visual: toggle strikethrough
+        -- Code(` `)
+        map("x", "<C-c>", toggle_visual("c"), opts) -- visual: toggle code
 
         -- 3) 列表：插入上下项 / 切 task / 重算编号
         map({ "n", "i" }, "<M-o>", "<Cmd>MDListItemBelow<CR>", opts)

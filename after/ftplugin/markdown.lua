@@ -29,12 +29,23 @@ vim.api.nvim_create_autocmd("FileType", {
 
     -- Add unchecked todo prefix for each selected line (keeps indentation)
     -- It also converts existing bullets/ordered/todo to "- [ ] ".
-    vim.keymap.set(
-      "v",
-      "<leader>mt",
-      [[:s/^\(\s*\)\(\(\d\+[.)]\s\+\|(\d\+)\s\+\|[-*+]\s\+\)\?\(\[\s*[xX ]\s*\]\s\+\)\?/\1- [ ] /<CR>:nohlsearch<CR>gv]],
-      vim.tbl_extend("force", opts, { desc = "Markdown: convert selection to TODO (- [ ] )" })
-    )
+    vim.keymap.set("v", "<leader>mt", function()
+      local start_line = vim.fn.line("'<")
+      local end_line = vim.fn.line("'>")
+      local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+      for i, line in ipairs(lines) do
+        local indent = line:match("^%s*") or ""
+        local content = line:gsub("^%s*", "")
+        content = content:gsub("^%d+[.)]%s+", "")
+        content = content:gsub("^%(%d+%)%s+", "")
+        content = content:gsub("^[-*+]%s+", "")
+        content = content:gsub("^%[[ xX]%]%s+", "")
+        lines[i] = indent .. "- [ ] " .. content
+      end
+
+      vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, lines)
+    end, { desc = "Markdown: convert selection to TODO (- [ ])" })
+
   end,
 })
-
