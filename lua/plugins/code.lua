@@ -1,14 +1,29 @@
 return {
   {
     "linux-cultist/venv-selector.nvim",
+    ft = "python",
     cmd = "VenvSelect",
     dependencies = { "michaelb/sniprun" },
     opts = {
+      search = {
+        conda_envs = {
+          command = "fd '/bin/python$' ~/.local/share/miniconda3 --full-path --color never --exclude pkgs",
+        },
+        macos_system = {
+          command = "echo /usr/bin/python3",
+        },
+        homebrew_python = {
+          command = "echo /opt/homebrew/bin/python3",
+        },
+      },
+
       options = {
         notify_user_on_venv_activation = true,
 
         set_environment_variables = true,
         activate_venv_in_terminal = true,
+        log_level = "DEBUG",
+
         on_venv_activate_callback = function()
           local py = require("venv-selector").python()
           if not py or py == "" then
@@ -149,13 +164,58 @@ return {
           },
         },
       },
+      "GCBallesteros/jupytext.nvim",
     },
     build = ":UpdateRemotePlugins",
     init = function()
-      -- these are examples, not defaults. Please see the readme
+      -- I find auto open annoying, keep in mind setting this option will require setting
+      -- a keybind for `:noautocmd MoltenEnterOutput` to open the output again
+      vim.g.molten_auto_open_output = false
+
+      -- this guide will be using image.nvim
+      -- Don't forget to setup and install the plugin if you want to view image outputs
       vim.g.molten_image_provider = "snacks.nvim"
-      vim.g.molten_output_win_max_height = 20
+
+      -- optional, I like wrapping. works for virt text and the output window
+      vim.g.molten_wrap_output = true
+
+      -- Output as virtual text. Allows outputs to always be shown, works with images, but can
+      -- be buggy with longer images
+      vim.g.molten_virt_text_output = true
+
+      -- this will make it so the output shows up below the \`\`\` cell delimiter
+      vim.g.molten_virt_lines_off_by_1 = true
+
+      vim.keymap.set(
+        "n",
+        "<localleader>me",
+        ":MoltenEvaluateOperator<CR>",
+        { desc = "evaluate operator", silent = true }
+      )
+      vim.keymap.set(
+        "n",
+        "<localleader>ms",
+        ":noautocmd MoltenEnterOutput<CR>",
+        { desc = "open output window", silent = true }
+      )
+      vim.keymap.set("n", "<localleader>mr", ":MoltenReevaluateCell<CR>", { desc = "re-eval cell", silent = true })
+
+      vim.keymap.set(
+        "v",
+        "<localleader>mv",
+        ":<C-u>MoltenEvaluateVisual<CR>gv",
+        { desc = "execute visual selection", silent = true }
+      )
+      vim.keymap.set("n", "<localleader>mh", ":MoltenHideOutput<CR>", { desc = "close output window", silent = true })
+      vim.keymap.set("n", "<localleader>md", ":MoltenDelete<CR>", { desc = "delete Molten cell", silent = true })
     end,
+  },
+
+  {
+    "GCBallesteros/jupytext.nvim",
+    config = true,
+    -- Depending on your nvim distro or config you may need to make the loading not lazy
+    -- lazy=false,
   },
 
   {
@@ -271,7 +331,7 @@ return {
       end)
     end,
   },
-    {
+  {
     "kawre/leetcode.nvim",
     -- cmd = "Leet",
     build = ":TSUpdate html", -- if you have `nvim-treesitter` installed
