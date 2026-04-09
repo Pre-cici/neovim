@@ -112,41 +112,4 @@ function M.run_current_file_task()
   })
 end
 
--- function M.run_pytest_file_task()
---   local file = current_file()
---   if file == '' then
---     return vim.notify('Save the current Python buffer first', vim.log.levels.WARN)
---   end
---
---   overseer.run({
---     name = string.format('pytest %s', vim.fn.fnamemodify(file, ':t')),
---     cmd = active_python(),
---     args = { '-m', 'pytest', file, '-q' },
---     cwd = M.project_root(0),
---     components = overseer.default_components(),
---   })
--- end
---
--- function M.run_pytest_nearest_task()
---   local bufnr = vim.api.nvim_get_current_buf()
---   local file = current_file()
---   if file == '' then
---     return vim.notify('Save the current Python buffer first', vim.log.levels.WARN)
---   end
---
---   local target = nearest_pytest_target(bufnr)
---   if not target then
---     return M.run_pytest_file_task()
---   end
---
---   local nodeid = string.format('%s::%s', file, target)
---   overseer.run({
---     name = string.format('pytest %s', target),
---     cmd = active_python(),
---     args = { '-m', 'pytest', nodeid, '-q' },
---     cwd = M.project_root(bufnr),
---     components = overseer.default_components(),
---   })
--- end
-
 return M

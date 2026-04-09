@@ -9,9 +9,6 @@ return {
         mamba_envs = {
           command = "fd '/bin/python$' ~/.local/share/mamba/envs/ --full-path --color never --exclude pkgs",
         },
-        macos_system = {
-          command = "echo /usr/bin/python3",
-        },
         homebrew_python = {
           command = "echo /opt/homebrew/bin/python3",
         },

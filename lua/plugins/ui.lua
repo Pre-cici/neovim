@@ -1,5 +1,69 @@
 return {
   {
+    'goolord/alpha-nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      if vim.fn.argc() > 0 then
+        return
+      end
+
+      local alpha = require 'alpha'
+      local dashboard = require 'alpha.themes.dashboard'
+
+      local function footer()
+        local stats = require('lazy').stats()
+        local loaded = stats.loaded or 0
+        local total = stats.count or loaded
+        local deferred = math.max(total - loaded, 0)
+        return string.format('%.2f ms startup, %d loaded, %d deferred', stats.startuptime or 0, loaded, deferred)
+      end
+
+      dashboard.section.header.val = {
+        '███╗   ██╗██╗   ██╗██╗███╗   ███╗',
+        '████╗  ██║██║   ██║██║████╗ ████║',
+        '██╔██╗ ██║██║   ██║██║██╔████╔██║',
+        '██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║',
+        '██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║',
+        '╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝',
+      }
+
+      dashboard.section.buttons.val = {
+        dashboard.button('e', '  New file', '<cmd>ene<cr>'),
+        dashboard.button('f', '  Find file', function()
+          Snacks.picker.files({ layout = { preset = 'telescope' }, cwd = vim.uv.cwd() })
+        end),
+        dashboard.button('r', '  Recent files', function()
+          Snacks.picker.recent({ layout = { preset = 'telescope' }, cwd = vim.uv.cwd() })
+        end),
+        dashboard.button('p', '  Projects', function()
+          Snacks.picker.projects({ layout = { preset = 'select' } })
+        end),
+        dashboard.button('s', '󰁯  Restore session', function()
+          require('persistence').load()
+        end),
+        dashboard.button('c', '  Open config', '<cmd>Oil ~/.config/nvim<cr>'),
+        dashboard.button('l', '󰒲  Lazy', '<cmd>Lazy<cr>'),
+        dashboard.button('q', '  Quit', '<cmd>qa<cr>'),
+      }
+
+      dashboard.section.footer.val = { footer() }
+
+      dashboard.opts.opts.noautocmd = true
+      alpha.setup(dashboard.opts)
+
+      vim.api.nvim_create_autocmd('User', {
+        once = true,
+        pattern = 'VeryLazy',
+        callback = function()
+          dashboard.section.footer.val = { footer() }
+          pcall(vim.cmd.AlphaRedraw)
+        end,
+      })
+    end,
+  },
+
+  {
     "folke/snacks.nvim",
     opts = {
       indent = {
@@ -80,15 +144,15 @@ return {
       { '<leader>nd', function() require('noice').cmd 'dismiss' end, desc = 'Dismiss All', },
       { '<leader>nm', ':messages <CR>', desc = 'Messages', },
     },
-    -- config = function(_, opts)
-    --   -- HACK: noice shows messages from before it was enabled,
-    --   -- but this is not ideal when Lazy is installing plugins,
-    --   -- so clear the messages in this case.
-    --   if vim.o.filetype == 'lazy' then
-    --     vim.cmd [[messages clear]]
-    --   end
-    --   require('noice').setup(opts)
-    -- end,
+    config = function(_, opts)
+      -- HACK: noice shows messages from before it was enabled,
+      -- but this is not ideal when Lazy is installing plugins,
+      -- so clear the messages in this case.
+      if vim.o.filetype == 'lazy' then
+        vim.cmd [[messages clear]]
+      end
+      require('noice').setup(opts)
+    end,
   },
 
   {
