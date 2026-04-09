@@ -1,6 +1,7 @@
 - [x] oil
 - [x] markdown
-- [-] picker
-- [x] python
 - [ ] jupyter notebook
 - [ ] overseer
+
+- [>] python.nvim
+- [ ] picker

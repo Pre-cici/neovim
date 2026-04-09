@@ -66,6 +66,7 @@ return {
         width = "block",
         style = "language",
       },
+
       heading = {
         sign = false,
         width = "block",

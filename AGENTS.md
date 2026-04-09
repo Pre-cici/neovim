@@ -1,36 +1,24 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-- `init.lua` is the primary entry point for the Neovim configuration.
-- `lua/config/` holds core settings: options, keymaps, and autocmds.
-- `lua/plugins/` and `lua/kickstart/plugins/` define plugin specs and related setup.
-- `doc/kickstart.txt` contains help documentation.
-- `lazy-lock.json` pins plugin versions for reproducible setups.
+## Structure That Matters
+- This is a modular Neovim config, not the upstream single-file kickstart layout.
+- Startup order is `init.lua` -> `lua/config/options.lua` -> `lua/config/keymaps.lua` -> `lua/config/autocmds.lua` -> `lua/config/lsp.lua` -> `lua/plugins/init.lua`.
+- Plugin specs live in `lua/plugins/*.lua`. `lua/plugins/init.lua` imports each module explicitly, so a new plugin file does nothing until it is added to that `spec` list.
+- Repo-local LSP server configs live in `lsp/*.lua`; they are activated explicitly from `lua/config/lsp.lua` via Neovim 0.11 `vim.lsp.enable(...)`.
 
-## Build, Test, and Development Commands
-- `nvim` launches Neovim and installs plugins via Lazy on first run.
-- `:Lazy sync` in Neovim updates, installs, and cleans plugins.
-- `:Lazy update` updates plugins without cleaning.
-- `:Mason` opens the LSP/DAP/tool installer UI.
-- `:checkhealth` validates dependencies and configuration health.
+## Verification
+- There is no automated test suite in this repo.
+- The only CI check in `.github/workflows/stylua.yml` is `stylua --check .`.
+- Formatting rules come from `.stylua.toml`: 2 spaces, 120 columns, `sort_requires.enabled = true`.
+- For code changes, run `stylua --check .` or `stylua .`, then open `nvim` and verify startup plus the affected workflow.
 
-## Coding Style & Naming Conventions
-- Lua files use 2-space indentation and `snake_case` for local vars.
-- Use descriptive module names that match paths (e.g., `lua/config/options.lua`).
-- Prefer small, focused plugin modules in `lua/plugins/` rather than large monoliths.
-- Keep new settings close to similar ones (options with options, keymaps with keymaps).
+## Tooling Gotchas
+- `conform.nvim` is the formatter entrypoint. Current mappings/config format `lua` with `stylua`, `python` with `ruff_fix` + `ruff_format` + `ruff_organize_imports`, and `markdown` with `prettier`.
+- `mason.nvim` auto-installs only `stylua`, `lua-language-server`, `pyright`, `ruff`, and `marksman`. `clangd` is enabled in `lua/config/lsp.lua` but is not in Mason's `ensure_installed` list.
+- If you add a new LSP server, wire all three places when needed: `lsp/<server>.lua`, `vim.lsp.enable('<server>')` in `lua/config/lsp.lua`, and `ensure_installed` in `lua/plugins/lspconfig.lua` if Mason should manage it.
 
-## Testing Guidelines
-- No automated test framework is configured in this repo.
-- Validate changes by launching `nvim`, opening a file, and verifying plugin behavior.
-- For plugin changes, run `:Lazy sync` and re-open Neovim to confirm startup stability.
-
-## Commit & Pull Request Guidelines
-- Recent commits use short, imperative summaries; optional prefixes appear (e.g., `fix: ...`, `README: ...`).
-- Keep commit messages under 72 characters when possible.
-- PRs should describe the change, list affected areas, and link any related issues.
-- Include screenshots or short clips for UI or UX changes.
-
-## Configuration Tips
-- This repo is intended for `NVIM_APPNAME=nvim-kickstart nvim` usage to isolate data.
-- Update pinned plugins with `:Lazy update` and commit `lazy-lock.json` if it changes.
+## Repo-Specific Behavior
+- Python is intentionally split: Pyright handles analysis, Ruff handles formatting/import organization, and `lsp/ruff.lua` disables Ruff hover so Pyright owns hover.
+- Python buffers prepend the project root to `PYTHONPATH` in both `lsp/pyright.lua` and `lua/plugins/code.lua`; avoid adding a conflicting third mechanism unless required.
+- Saving a new file auto-creates parent directories via `lua/config/autocmds.lua`; do not add extra save helpers for that.
+- `lua/plugins/code.lua` contains custom task/debug tooling (`overseer.nvim`, `sniprun`, `molten-nvim`, `venv-selector.nvim`), so changes there often need an in-editor smoke test instead of static inspection only.

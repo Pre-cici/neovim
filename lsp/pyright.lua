@@ -21,6 +21,8 @@ local function set_python_path(command)
   end
 end
 
+local python_utils = require('utils.python')
+
 ---@type vim.lsp.Config
 return {
   cmd = { "pyright-langserver", "--stdio" },
@@ -47,36 +49,8 @@ return {
     },
   },
   on_attach = function(client, bufnr)
-    -- Add project root to PYTHONPATH so SnipRun can import local packages
-    local function project_root()
-      local buf = vim.api.nvim_buf_get_name(0)
-      local start = (buf ~= "" and vim.fs.dirname(buf)) or vim.loop.cwd()
-      local markers = { "pyproject.toml", "setup.py", "setup.cfg", ".git" }
-      local found = vim.fs.find(markers, { path = start, upward = true })[1]
-      return found and vim.fs.dirname(found) or vim.loop.cwd()
-    end
-
-    local function prepend_env(name, value)
-      local sep = ":"
-      local cur = vim.env[name] or ""
-      if cur == "" then
-        vim.env[name] = value
-        return
-      end
-      for entry in string.gmatch(cur, "([^" .. sep .. "]+)") do
-        if entry == value then
-          return
-        end
-      end
-      vim.env[name] = value .. sep .. cur
-    end
-
-    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-      pattern = "*.py",
-      callback = function()
-        prepend_env("PYTHONPATH", project_root())
-      end,
-    })
+    python_utils.ensure_pythonpath_autocmd()
+    python_utils.prepend_env('PYTHONPATH', python_utils.project_root(bufnr))
 
     vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightSetPythonPath", set_python_path, {
       desc = "Reconfigure pyright with the provided python path",
