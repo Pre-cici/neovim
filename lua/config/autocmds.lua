@@ -1,13 +1,11 @@
 -- lua/config/autocmds.lua
 -- Kickstart-style autocmds (no LazyVim dependency)
 
-local function augroup(name)
-  return vim.api.nvim_create_augroup("user_" .. name, { clear = true })
-end
+local autocmd_utils = require 'utils.autocmd'
 
 -- Reload file if changed outside of Neovim
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
-  group = augroup("checktime"),
+  group = autocmd_utils.augroup("checktime"),
   callback = function()
     if vim.bo.buftype ~= "nofile" then
       vim.cmd("checktime")
@@ -18,7 +16,7 @@ vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
-  group = augroup("highlight_yank"),
+  group = autocmd_utils.augroup("highlight_yank"),
   callback = function()
     (vim.hl or vim.highlight).on_yank()
   end,
@@ -27,7 +25,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- Resize splits when the terminal window is resized
 vim.api.nvim_create_autocmd("VimResized", {
-  group = augroup("resize_splits"),
+  group = autocmd_utils.augroup("resize_splits"),
   callback = function()
     local current_tab = vim.fn.tabpagenr()
     vim.cmd("tabdo wincmd =")
@@ -38,7 +36,7 @@ vim.api.nvim_create_autocmd("VimResized", {
 
 -- Go to last cursor position when opening a file
 vim.api.nvim_create_autocmd("BufReadPost", {
-  group = augroup("last_loc"),
+  group = autocmd_utils.augroup("last_loc"),
   callback = function(event)
     local exclude = { "gitcommit" }
     local buf = event.buf
@@ -59,7 +57,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
 -- Close certain filetypes with q
 vim.api.nvim_create_autocmd("FileType", {
-  group = augroup("close_with_q"),
+  group = autocmd_utils.augroup("close_with_q"),
   pattern = {
     "PlenaryTestPopup",
     "checkhealth",
@@ -91,7 +89,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Wrap + spell for text-like filetypes
 vim.api.nvim_create_autocmd("FileType", {
-  group = augroup("wrap_spell"),
+  group = autocmd_utils.augroup("wrap_spell"),
   pattern = { "text", "plaintex", "typst", "gitcommit", "markdown" },
   callback = function()
     vim.opt_local.wrap = true
@@ -103,7 +101,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Fix conceallevel for json files
 vim.api.nvim_create_autocmd("FileType", {
-  group = augroup("json_conceal"),
+  group = autocmd_utils.augroup("json_conceal"),
   pattern = { "json", "jsonc", "json5" },
   callback = function()
     vim.opt_local.conceallevel = 0
@@ -113,7 +111,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Auto-create parent directories on save
 vim.api.nvim_create_autocmd("BufWritePre", {
-  group = augroup("auto_create_dir"),
+  group = autocmd_utils.augroup("auto_create_dir"),
   callback = function(event)
     -- Skip URLs like "scheme://"
     if event.match:match("^%w%w+:[\\/][\\/]") then
@@ -127,7 +125,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 -- Quit Neovim if only sidebar windows remain
 vim.api.nvim_create_autocmd("BufEnter", {
-  group = augroup("auto_quit_sidebars"),
+  group = autocmd_utils.augroup("auto_quit_sidebars"),
   callback = function()
     local wins = vim.api.nvim_tabpage_list_wins(0)
     -- neo-tree handles if there is only a single window left

@@ -64,12 +64,14 @@ local schemes = {
         color_overrides = {},
         custom_highlights = function(colors)
           return {
+            NormalFloat = { bg = colors.none },
+            FloatBorder = { bg = colors.none },
+            NormalSB = { bg = colors.none },
             Pmenu = { bg = colors.none },
             BlinkCmpMenuBorder = { bg = colors.none },
             DropBarMenuHoverIcon = { bg = colors.none, fg = colors.flamingo, reverse = false },
             LazyNormal = { bg = colors.mantle, fg = colors.text },
             RenderMarkdownCode = { bg = colors.none },
-
           }
         end,
         default_integrations = true,

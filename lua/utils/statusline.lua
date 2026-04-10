@@ -83,37 +83,6 @@ M.colors = {
   bright_black = '#5B6078',
 }
 
-function M.lsp_client_names(bufnr)
-  local names = {}
-  for _, client in ipairs(vim.lsp.get_clients { bufnr = bufnr or 0 }) do
-    names[#names + 1] = client.name
-  end
-  table.sort(names)
-  return table.concat(names, ', ')
-end
-
-function M.short_cwd(conditions)
-  local cwd = vim.fn.fnamemodify(vim.fn.getcwd(0), ':~')
-  if not conditions.width_percent_below(#cwd, 0.25) then
-    cwd = vim.fn.pathshorten(cwd)
-  end
-  return cwd .. ' '
-end
-
-function M.help_filename(bufnr)
-  local filename = vim.api.nvim_buf_get_name(bufnr or 0)
-  return vim.fn.fnamemodify(filename, ':t')
-end
-
-function M.python_env_name()
-  local env = vim.env.VIRTUAL_ENV or vim.env.CONDA_PREFIX
-  if not env or env == '' then
-    return nil
-  end
-  env = env:gsub('[/\\]+$', '')
-  return env:match('([^/\\]+)$') or env
-end
-
 function M.vi_mode()
   return {
     init = function(self)
@@ -149,7 +118,12 @@ function M.lsp_clients(conditions)
     condition = conditions.lsp_attached,
     update = { 'LspAttach', 'LspDetach', 'BufEnter', 'BufWritePost' },
     init = function(self)
-      self._txt = M.lsp_client_names(0)
+      local names = {}
+      for _, client in ipairs(vim.lsp.get_clients { bufnr = 0 }) do
+        names[#names + 1] = client.name
+      end
+      table.sort(names)
+      self._txt = table.concat(names, ', ')
     end,
     provider = function(self)
       if not self._txt or self._txt == '' then
@@ -203,7 +177,11 @@ function M.work_dir(conditions)
     },
     {
       provider = function()
-        return M.short_cwd(conditions)
+        local cwd = vim.fn.fnamemodify(vim.fn.getcwd(0), ':~')
+        if not conditions.width_percent_below(#cwd, 0.25) then
+          cwd = vim.fn.pathshorten(cwd)
+        end
+        return cwd .. ' '
       end,
       hl = { fg = 'blue', italic = true },
     },
@@ -216,20 +194,30 @@ function M.help_file_name()
       return vim.bo.filetype == 'help'
     end,
     provider = function()
-      return M.help_filename(0)
+      local filename = vim.api.nvim_buf_get_name(0)
+      return vim.fn.fnamemodify(filename, ':t')
     end,
     hl = { fg = 'blue' },
   }
 end
 
 function M.venv_component()
+  local function python_env_name()
+    local env = vim.env.VIRTUAL_ENV or vim.env.CONDA_PREFIX
+    if not env or env == '' then
+      return nil
+    end
+    env = env:gsub('[/\\]+$', '')
+    return env:match('([^/\\]+)$') or env
+  end
+
   return {
     hl = { fg = 'yellow', bold = true },
     condition = function()
-      return M.python_env_name() ~= nil
+      return python_env_name() ~= nil
     end,
     provider = function()
-      return '  ' .. ' ' .. M.python_env_name()
+      return '  ' .. ' ' .. python_env_name()
     end,
     on_click = {
       name = 'heirline_venv_selector',

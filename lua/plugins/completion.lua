@@ -14,6 +14,7 @@ return {
         "catppuccin",
         "nvim-dap-ui",
         "overseer.nvim",
+        "leetcode.nvim",
 
         { path = "nvim-dap", mods = { "dap" } },
         { path = "nvim-nio", mods = { "nio" } },
@@ -119,7 +120,11 @@ return {
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = true, auto_show_delay_ms = 500 },
+        documentation = {
+          auto_show = true,
+          auto_show_delay_ms = 500,
+          treesitter_highlighting = false,
+        },
         menu = {
           draw = {
             columns = {
@@ -168,7 +173,12 @@ return {
       fuzzy = { implementation = "lua" },
 
       -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      signature = {
+        enabled = true,
+        window = {
+          treesitter_highlighting = false,
+        },
+      },
     },
   },
 }

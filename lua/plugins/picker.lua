@@ -1,15 +1,4 @@
--- lua/plugins/snacks.lua
-local function get_root(bufnr)
-  bufnr = bufnr or 0
-  local name = vim.api.nvim_buf_get_name(bufnr)
-  local path = (name ~= "" and vim.fs.dirname(name)) or vim.uv.cwd()
-
-  local git = vim.fs.find(".git", { path = path, upward = true })[1]
-  if git then
-    return vim.fs.dirname(git)
-  end
-  return vim.uv.cwd()
-end
+local root_utils = require 'utils.root'
 
 -- TODO: layout / show path / change path
 return {
@@ -48,9 +37,9 @@ return {
           },
         },
       },
-      actions = {
-        toggle_cwd = function(p)
-          local root = vim.fs.normalize(get_root(p.input.filter.current_buf))
+        actions = {
+          toggle_cwd = function(p)
+          local root = vim.fs.normalize(root_utils.git_root(p.input.filter.current_buf))
           local cwd = vim.fs.normalize(vim.uv.cwd() or ".")
           local current = p:cwd()
           p:set_cwd(current == root and cwd or root)
@@ -62,7 +51,7 @@ return {
 
   -- stylua: ignore
   keys = {
-    { "<leader><space>", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = get_root(0) }) end,
+    { "<leader><space>", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = root_utils.git_root(0) }) end,
       desc = "Find Files" },
 
     { "<leader>bb", function() Snacks.picker.buffers({ layout={preset="select"} }) end, desc = "Buffers" },
@@ -70,10 +59,10 @@ return {
     { "<leader>fb", function() Snacks.picker.buffers({ layout={preset="select"}, hidden = true, nofile = true }) end,
       desc = "Buffers (all)" },
 
-    { "<leader>ff", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = get_root(0), hidden = true, follow = true }) end,
+    { "<leader>ff", function() Snacks.picker.files({ layout={preset="telescope"}, cwd = root_utils.git_root(0), hidden = true, follow = true }) end,
       desc = "Find Files (Hidden)" },
 
-    { "<leader>fr", function() Snacks.picker.recent({ layout={preset="telescope"}, cwd = get_root(0) }) end,
+    { "<leader>fr", function() Snacks.picker.recent({ layout={preset="telescope"}, cwd = root_utils.git_root(0) }) end,
       desc = "Recent" },
 
 
@@ -99,11 +88,11 @@ return {
     { "<leader>fq", function() Snacks.picker.qflist() end, desc = "Quickfix List" },
 
 
-    { "<leader>/", function() Snacks.picker.grep({ layout={preset="ivy"}, cwd = get_root(0), live = true }) end,
+    { "<leader>/", function() Snacks.picker.grep({ layout={preset="ivy"}, cwd = root_utils.git_root(0), live = true }) end,
       desc = "Grep (Root)" },
-    { "<leader>sg", function() Snacks.picker.grep({ layout={preset="ivy"}, cwd = get_root(0), live = true }) end,
+    { "<leader>sg", function() Snacks.picker.grep({ layout={preset="ivy"}, cwd = root_utils.git_root(0), live = true }) end,
       desc = "Grep (Root)" },
-    { "<leader>sw", function() local w = vim.fn.expand("<cword>") Snacks.picker.grep({ layout={preset="ivy"}, cwd = get_root(0), search = w, live = true }) end,
+    { "<leader>sw", function() local w = vim.fn.expand("<cword>") Snacks.picker.grep({ layout={preset="ivy"}, cwd = root_utils.git_root(0), search = w, live = true }) end,
       desc = "Grep Word (Root)" },
 
     { "<leader>sb", function() Snacks.picker.lines({layout={preset="ivy_split"}}) end, desc = "Search Buffer Lines" },

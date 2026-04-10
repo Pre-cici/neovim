@@ -1,30 +1,8 @@
--- Declare a global function to retrieve the current directory
+local oil_utils = require 'utils.oil'
+local root_utils = require 'utils.root'
+
 function _G.get_oil_winbar()
-  local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
-  local dir = require("oil").get_current_dir(bufnr)
-  if dir then
-    return vim.fn.fnamemodify(dir, ":~")
-  else
-    -- If there is no current directory (e.g. over ssh), just show the buffer name
-    return vim.api.nvim_buf_get_name(0)
-  end
-end
-
--- Find project root from a starting directory
-local function find_project_root(start_dir)
-  local markers = {
-    ".git",
-    "pyproject.toml",
-    "setup.py",
-    "setup.cfg",
-    "package.json",
-    "go.mod",
-    "Cargo.toml",
-    "Makefile",
-  }
-
-  local found = vim.fs.find(markers, { path = start_dir, upward = true })[1]
-  return found and vim.fs.dirname(found) or start_dir
+  return oil_utils.winbar()
 end
 
 return {
@@ -79,7 +57,7 @@ return {
             if not dir then
               return
             end
-            local root = find_project_root(dir)
+            local root = root_utils.project_root(dir)
             -- 1) Change Neovim cwd to project root
             vim.cmd("cd " .. vim.fn.fnameescape(root))
             -- oil.open(root)

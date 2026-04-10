@@ -1,7 +1,7 @@
 local M = {}
 
-local root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', '.git' }
 local overseer = require('utils.overseer')
+local root_utils = require('utils.root')
 
 local function active_python()
   local ok, venv_selector = pcall(require, 'venv-selector')
@@ -65,11 +65,7 @@ local function nearest_pytest_target(bufnr)
 end
 
 function M.project_root(bufnr)
-  bufnr = bufnr or 0
-  local buf = vim.api.nvim_buf_get_name(bufnr)
-  local start = (buf ~= '' and vim.fs.dirname(buf)) or vim.uv.cwd()
-  local found = vim.fs.find(root_markers, { path = start, upward = true })[1]
-  return found and vim.fs.dirname(found) or vim.uv.cwd()
+  return root_utils.python_root(bufnr)
 end
 
 function M.prepend_env(name, value)
