@@ -1,3 +1,5 @@
+local terminal_utils = require("utils.terminal")
+
 return {
   {
     "goolord/alpha-nvim",
@@ -84,6 +86,38 @@ return {
         },
       },
       statuscolumn = { folds = { open = true, git_hl = true } },
+    },
+  },
+
+  {
+    "folke/edgy.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.opt.laststatus = 3
+      vim.opt.splitkeep = "screen"
+    end,
+    opts = {
+      bottom = {
+        {
+          ft = "snacks_terminal",
+          filter = function(buf)
+            return not terminal_utils.snacks_terminal_cmd_starts_with(buf, "opencode --port")
+              and not terminal_utils.snacks_terminal_cmd_starts_with(buf, "lazygit")
+          end,
+          size = { height = 0.3 },
+          title = "Terminal",
+        },
+      },
+      right = {
+        {
+          ft = "snacks_terminal",
+          filter = function(buf)
+            return terminal_utils.snacks_terminal_cmd_starts_with(buf, "opencode --port")
+          end,
+          size = { width = 0.35 },
+          title = "Opencode",
+        },
+      },
     },
   },
 

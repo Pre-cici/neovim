@@ -58,8 +58,8 @@ return {
           { '<leader>x', group = 'diagnostics/quickfix' },
           { '<leader>n', group = 'notification' },
           { "<leader>o", group = "overseer" } ,
-
-
+          { "<leader>h", group = "harpoon" } ,
+          { "<leader>a", group = "ai" } ,
 
           { '[', group = 'prev' },
           { ']', group = 'next' },
@@ -230,6 +230,9 @@ return {
 
   {
     "christoomey/vim-tmux-navigator",
+    init = function()
+      vim.g.tmux_navigator_no_mappings = 1
+    end,
     cmd = {
       "TmuxNavigateLeft",
       "TmuxNavigateDown",
@@ -237,13 +240,6 @@ return {
       "TmuxNavigateRight",
       "TmuxNavigatePrevious",
       "TmuxNavigatorProcessList",
-    },
-    keys = {
-      { "<c-h>", "<cmd>TmuxNavigateLeft<cr>" },
-      { "<c-j>", "<cmd>TmuxNavigateDown<cr>" },
-      { "<c-k>", "<cmd>TmuxNavigateUp<cr>" },
-      { "<c-l>", "<cmd>TmuxNavigateRight<cr>" },
-      { "<c-\\>", "<cmd>TmuxNavigatePrevious<cr>" },
     },
   },
 

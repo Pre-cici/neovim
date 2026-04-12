@@ -1,8 +1,9 @@
 local keymap = vim.keymap
 local diagnostic_utils = require("utils.diagnostic")
 local root_utils = require("utils.root")
+local terminal_utils = require("utils.terminal")
 
-keymap.set("n", "<leader>fs", "<cmd>source %<CR>", { desc = "Source current file" })
+keymap.set("n", "<leader>fs", "<cmd>restart %<CR>", { desc = "Source current file" })
 
 keymap.set("i", "jj", "<ESC>")
 keymap.set("i", "jk", "<ESC>")
@@ -20,12 +21,17 @@ keymap.set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down",
 keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 keymap.set({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
-
 -- Move to window using the <ctrl> hjkl keys
-keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
-keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
-keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
-keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
+keymap.set("n", "<C-h>", function() terminal_utils.navigate_window("Left") end, { desc = "Go to Left Window" })
+keymap.set("n", "<C-j>", function() terminal_utils.navigate_window("Down") end, { desc = "Go to Lower Window" })
+keymap.set("n", "<C-k>", function() terminal_utils.navigate_window("Up") end, { desc = "Go to Upper Window" })
+keymap.set("n", "<C-l>", function() terminal_utils.navigate_window("Right") end, { desc = "Go to Right Window" })
+
+keymap.set("t", "<C-h>", function() terminal_utils.navigate_from_terminal("Left") end, { desc = "Go to Left Window" })
+keymap.set("t", "<C-j>", function() terminal_utils.navigate_from_terminal("Down") end, { desc = "Go to Lower Window" })
+keymap.set("t", "<C-k>", function() terminal_utils.navigate_from_terminal("Up") end, { desc = "Go to Upper Window" })
+keymap.set("t", "<C-l>", function() terminal_utils.navigate_from_terminal("Right") end, { desc = "Go to Right Window" })
+keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit Terminal Mode" })
 
 -- Move Lines
 keymap.set("n", "<A-J>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
@@ -53,6 +59,11 @@ keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- windows
 keymap.set("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
+
+-- terminal
+keymap.set({ "n", "t" }, "<leader>tt", function()
+  Snacks.terminal.toggle()
+end, { desc = "Toggle Terminal" })
 
 -- tabs
 keymap.set("n", "<leader><tab>l", "<cmd>tablast<cr>", { desc = "Last Tab" })
