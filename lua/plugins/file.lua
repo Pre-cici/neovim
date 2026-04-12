@@ -66,11 +66,14 @@ return {
           mode = "n",
         },
 
+        ['gs'] = { 'actions.select', opts = { horizontal = true } },
+        ['gv'] = { 'actions.select', opts = { vertical = true } },
         ['-'] = { 'actions.select', opts = { horizontal = true } },
         ['\\'] = { 'actions.select', opts = { vertical = true } },
+
         ['gt'] = { 'actions.select', opts = { tab = true } },
 
-        ["gs"] = { "actions.change_sort", mode = "n" },
+        ["gr"] = { "actions.change_sort", mode = "n" },
 
         ["gd"] = {
           desc = "Toggle file detail view",

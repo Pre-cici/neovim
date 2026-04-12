@@ -118,9 +118,20 @@ return {
         tmux_pane_id = nil
       end
 
+      local function toggle_tmux_zoom()
+        local result = vim.system({ "tmux", "resize-pane", "-Z" }, { text = true }):wait()
+        if result.code ~= 0 then
+          vim.notify(
+            result.stderr ~= "" and result.stderr or "Failed to toggle tmux zoom for opencode",
+            vim.log.levels.ERROR,
+            { title = "opencode" }
+          )
+        end
+      end
+
       local function toggle_tmux_pane()
         if tmux_pane_exists() then
-          close_tmux_pane()
+          toggle_tmux_zoom()
         else
           open_tmux_pane()
         end
@@ -161,6 +172,14 @@ return {
         end,
       })
 
+      vim.api.nvim_create_user_command("OpencodeStop", function()
+        if tmux_available() then
+          close_tmux_pane()
+        else
+          close_builtin_terminal()
+        end
+      end, { desc = "Stop opencode" })
+
       -- Required for `opts.events.reload`.
       vim.o.autoread = true
 
@@ -177,25 +196,22 @@ return {
         require("opencode").toggle()
       end, { desc = "Toggle opencode" })
 
-      vim.keymap.set({ "n", "x" }, "go", function()
+      vim.keymap.set({ "x" }, "go", function()
         return require("opencode").operator("@this ")
       end, { desc = "Add range to opencode", expr = true })
 
-      vim.keymap.set("n", "goo", function()
+      vim.keymap.set("n", "go", function()
         return require("opencode").operator("@this ") .. "_"
       end, { desc = "Add line to opencode", expr = true })
 
-      vim.keymap.set("n", "<S-C-u>", function()
+      vim.keymap.set("n", "<A-u>", function()
         require("opencode").command("session.half.page.up")
       end, { desc = "Scroll opencode up" })
 
-      vim.keymap.set("n", "<S-C-d>", function()
+      vim.keymap.set("n", "<A-d>", function()
         require("opencode").command("session.half.page.down")
       end, { desc = "Scroll opencode down" })
 
-      -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o…".
-      vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
-      vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
     end,
   },
 }

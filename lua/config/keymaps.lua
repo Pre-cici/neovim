@@ -10,6 +10,10 @@ keymap.set("i", "jk", "<ESC>")
 keymap.set("n", "q", "<nop>", { desc = "Disable macro recording" })
 keymap.set("n", "Q", "q", { desc = "Record macro" })
 
+-- number increment
+vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
+vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
+
 -- better up/down
 keymap.set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 keymap.set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
@@ -23,18 +27,6 @@ keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true }
 keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
 keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
 
--- Resize window using <ctrl> arrow keys
-keymap.set("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
-keymap.set("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
-keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" })
-keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
-
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
-keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
-keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
-keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
-keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
-
 -- Move Lines
 keymap.set("n", "<A-J>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
 keymap.set("n", "<A-K>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })
@@ -47,7 +39,6 @@ keymap.set("v", "<A-K>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv
 keymap.set("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 keymap.set("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 keymap.set("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-keymap.set("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 keymap.set("n", "<leader>bd", function()
   Snacks.bufdelete()
 end, { desc = "Delete Buffer" })
@@ -61,7 +52,6 @@ keymap.set("n", "<leader>r", "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><C
 keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- windows
-keymap.set("n", "<leader>w", "<C-w>", { desc = "Window prefix" })
 keymap.set("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
 
 -- tabs

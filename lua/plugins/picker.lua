@@ -28,12 +28,12 @@ return {
             ["<a-/>"] = { "toggle_regex", mode = { "i", "n" } },
             ["<a-p>"] = { "toggle_preview", mode = { "i", "n" } },
 
-            ["<c-g>"] = { "toggle_live", mode = { "i", "n" } },
+            ["<a-g>"] = { "toggle_live", mode = { "i", "n" } },
 
-            ["<c-q>"] = { "qflist", mode = { "i", "n" } },
+            ["<a-q>"] = { "qflist", mode = { "i", "n" } },
 
-            ["<c-s>"] = { "edit_split", mode = { "i", "n" } },
-            ["<c-v>"] = { "edit_vsplit", mode = { "i", "n" } },
+            ["<a-s>"] = { "edit_split", mode = { "i", "n" } },
+            ["<a-v>"] = { "edit_vsplit", mode = { "i", "n" } },
           },
         },
       },
