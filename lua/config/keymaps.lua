@@ -31,7 +31,6 @@ keymap.set("t", "<C-h>", function() terminal_utils.navigate_from_terminal("Left"
 keymap.set("t", "<C-j>", function() terminal_utils.navigate_from_terminal("Down") end, { desc = "Go to Lower Window" })
 keymap.set("t", "<C-k>", function() terminal_utils.navigate_from_terminal("Up") end, { desc = "Go to Upper Window" })
 keymap.set("t", "<C-l>", function() terminal_utils.navigate_from_terminal("Right") end, { desc = "Go to Right Window" })
-keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Exit Terminal Mode" })
 
 -- Move Lines
 keymap.set("n", "<A-J>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
@@ -45,12 +44,8 @@ keymap.set("v", "<A-K>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv
 keymap.set("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 keymap.set("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 keymap.set("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-keymap.set("n", "<leader>bd", function()
-  Snacks.bufdelete()
-end, { desc = "Delete Buffer" })
-keymap.set("n", "<leader>bo", function()
-  Snacks.bufdelete.other()
-end, { desc = "Delete Other Buffers" })
+keymap.set("n", "<leader>bd", function() Snacks.bufdelete() end, { desc = "Delete Buffer" })
+keymap.set("n", "<leader>bo", function() Snacks.bufdelete.other() end, { desc = "Delete Other Buffers" })
 keymap.set("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
 
 -- refresh buffer
@@ -80,6 +75,7 @@ keymap.set("x", ">", ">gv")
 -- quit
 keymap.set("n", "<leader>qa", "<cmd>qa<cr>", { desc = "Quit All" })
 
+-- better next search
 keymap.set("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next Search Result" })
 keymap.set("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })
 keymap.set("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })

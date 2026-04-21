@@ -10,13 +10,19 @@ return {
       picker = { enabled = true },
       laztgit = { enabled = true },
       bufdelete = { enabled = true },
-      image = { enabled = true },
-      terminal = {
-        auto_insert = true,
-        start_insert = true,
+      image = {
+        enabled = true,
+        doc = { render_math = true, inline = false },
+        math = {
+          latex = {
+            font_size = "small",
+          },
+        },
       },
+      terminal = { auto_insert = true, start_insert = true, win = { wo = { winbar = "" } } },
 
       -- ui
+      animate = { enabled = true },
       words = { enabled = true },
       statuscolumn = { enabled = true },
       dashboard = { enabled = false },

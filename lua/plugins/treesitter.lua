@@ -1,30 +1,69 @@
 return {
-  { -- Treesitter: highlight / indent / folds / incremental selection
+  {
     "nvim-treesitter/nvim-treesitter",
     lazy = false,
     build = ":TSUpdate",
-    branch = "master",
-    opts = {
-      -- stylua: ignore
-      ensure_installed = {
-        'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown',
-        'markdown_inline', 'query', 'vim', 'vimdoc', 'python',
-        'json', 'yaml', "ninja", "rst"
-      },
-      auto_install = true,
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = { "ruby" },
-      },
-      indent = {
-        enable = true,
-        disable = { "ruby" },
-      },
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
-      -- vim.opt.foldmethod = "expr"
-      -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+    config = function()
+      local ts = require("nvim-treesitter")
+
+      ts.setup({
+        install_dir = vim.fn.stdpath("data") .. "/site",
+      })
+
+      ts.install({
+        "bash",
+        "c",
+        "diff",
+        "html",
+        "lua",
+        "luadoc",
+        "markdown",
+        "markdown_inline",
+        "query",
+        "vim",
+        "vimdoc",
+        "python",
+        "json",
+        "yaml",
+        "ninja",
+        "rst",
+        "latex",
+      })
+
+      local augroup = vim.api.nvim_create_augroup("TreesitterAutoStart", { clear = true })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = augroup,
+        callback = function(args)
+          local ft = args.match
+          if not ft or ft == "" then
+            return
+          end
+
+          local ok_lang, lang = pcall(vim.treesitter.language.get_lang, ft)
+          lang = (ok_lang and lang) or ft
+
+          local ok_add = pcall(vim.treesitter.language.add, lang)
+          if ok_add then
+            pcall(vim.treesitter.start, args.buf, lang)
+          end
+        end,
+      })
+
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) then
+          local ft = vim.bo[buf].filetype
+          if ft ~= "" then
+            local ok_lang, lang = pcall(vim.treesitter.language.get_lang, ft)
+            lang = (ok_lang and lang) or ft
+
+            local ok_add = pcall(vim.treesitter.language.add, lang)
+            if ok_add then
+              pcall(vim.treesitter.start, buf, lang)
+            end
+          end
+        end
+      end
     end,
   },
   {
@@ -66,7 +105,6 @@ return {
         -- end
       end
 
-
       vim.api.nvim_create_autocmd("ColorScheme", { callback = set_ctx_hl })
       set_ctx_hl()
 
@@ -91,18 +129,12 @@ return {
               enable = true,
               lookahead = true,
               keymaps = {
-                ["ak"] = { query = "@block.outer", desc = "around block" },
-                ["ik"] = { query = "@block.inner", desc = "inside block" },
+                ["ab"] = { query = "@block.outer", desc = "around block" },
+                ["ib"] = { query = "@block.inner", desc = "inside block" },
                 ["ac"] = { query = "@class.outer", desc = "around class" },
                 ["ic"] = { query = "@class.inner", desc = "inside class" },
-                ["a?"] = { query = "@conditional.outer", desc = "around conditional" },
-                ["i?"] = { query = "@conditional.inner", desc = "inside conditional" },
                 ["af"] = { query = "@function.outer", desc = "around function " },
                 ["if"] = { query = "@function.inner", desc = "inside function " },
-                ["al"] = { query = "@loop.outer", desc = "around loop" },
-                ["il"] = { query = "@loop.inner", desc = "inside loop" },
-                ["aa"] = { query = "@parameter.outer", desc = "around argument" },
-                ["ia"] = { query = "@parameter.inner", desc = "inside argument" },
               },
             },
             move = {

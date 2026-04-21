@@ -72,6 +72,7 @@ local schemes = {
             DropBarMenuHoverIcon = { bg = colors.none, fg = colors.flamingo, reverse = false },
             LazyNormal = { bg = colors.mantle, fg = colors.text },
             RenderMarkdownCode = { bg = colors.none },
+            ["@markup.italic"] = { fg = colors.flamingo, italic = true },
           }
         end,
         default_integrations = true,

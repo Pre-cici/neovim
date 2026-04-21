@@ -26,7 +26,7 @@ require('lazy').setup {
     { import = 'plugins.picker' },
     { import = 'plugins.ui' },
     { import = 'plugins.colorscheme' },
-    -- { import = 'plugins.treesitter' },
+    { import = 'plugins.treesitter' },
     { import = 'plugins.snacks' },
     { import = 'plugins.lspconfig' },
     { import = 'plugins.completion' },
