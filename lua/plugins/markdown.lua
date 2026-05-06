@@ -58,19 +58,22 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     event = "VeryLazy",
     opts = {
-      render_modes = { "n", "c", "t", "i", "v" },
-
       code = {
         sign = false,
         disable_background = true,
         width = "block",
         style = "language",
       },
-
       heading = {
         sign = false,
         width = "block",
         render_modes = true, -- keep rendering while inserting
+      },
+      link = {
+        custom = {
+          heading = { pattern = "^#", icon = " " },
+          note = { pattern = "%.md$", icon = " " },
+        },
       },
       checkbox = {
         unchecked = { icon = "󰄱", highlight = "RenderMarkdownCodeFallback" },
@@ -97,111 +100,25 @@ return {
           },
         },
       },
-      callout = {
-        note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RenderMarkdownInfo", category = "github" },
-        tip = { raw = "[!TIP]", rendered = "󰌶 Tip", highlight = "RenderMarkdownSuccess", category = "github" },
-        important = {
-          raw = "[!IMPORTANT]",
-          rendered = "󰅾 Important",
-          highlight = "RenderMarkdownHint",
-          category = "github",
-        },
-        warning = {
-          raw = "[!WARNING]",
-          rendered = "󰀪 Warning",
-          highlight = "RenderMarkdownWarn",
-          category = "github",
-        },
-        caution = {
-          raw = "[!CAUTION]",
-          rendered = "󰳦 Caution",
-          highlight = "RenderMarkdownError",
-          category = "github",
-        },
-        -- Obsidian: https://help.obsidian.md/Editing+and+formatting/Callouts
-        abstract = {
-          raw = "[!ABSTRACT]",
-          rendered = "󰨸 Abstract",
-          highlight = "RenderMarkdownInfo",
-          category = "obsidian",
-        },
-        summary = {
-          raw = "[!SUMMARY]",
-          rendered = "󰨸 Summary",
-          highlight = "RenderMarkdownInfo",
-          category = "obsidian",
-        },
-        tldr = { raw = "[!TLDR]", rendered = "󰨸 Tldr", highlight = "RenderMarkdownInfo", category = "obsidian" },
-        info = { raw = "[!INFO]", rendered = "󰋽 Info", highlight = "RenderMarkdownInfo", category = "obsidian" },
-        todo = { raw = "[!TODO]", rendered = "󰗡 Todo", highlight = "RenderMarkdownInfo", category = "obsidian" },
-        hint = { raw = "[!HINT]", rendered = "󰌶 Hint", highlight = "RenderMarkdownSuccess", category = "obsidian" },
-        success = {
-          raw = "[!SUCCESS]",
-          rendered = "󰄬 Success",
-          highlight = "RenderMarkdownSuccess",
-          category = "obsidian",
-        },
-        check = {
-          raw = "[!CHECK]",
-          rendered = "󰄬 Check",
-          highlight = "RenderMarkdownSuccess",
-          category = "obsidian",
-        },
-        done = { raw = "[!DONE]", rendered = "󰄬 Done", highlight = "RenderMarkdownSuccess", category = "obsidian" },
-        question = {
-          raw = "[!QUESTION]",
-          rendered = "󰘥 Question",
-          highlight = "RenderMarkdownWarn",
-          category = "obsidian",
-        },
-        help = { raw = "[!HELP]", rendered = "󰘥 Help", highlight = "RenderMarkdownWarn", category = "obsidian" },
-        faq = { raw = "[!FAQ]", rendered = "󰘥 Faq", highlight = "RenderMarkdownWarn", category = "obsidian" },
-        attention = {
-          raw = "[!ATTENTION]",
-          rendered = "󰀪 Attention",
-          highlight = "RenderMarkdownWarn",
-          category = "obsidian",
-        },
-        failure = {
-          raw = "[!FAILURE]",
-          rendered = "󰅖 Failure",
-          highlight = "RenderMarkdownError",
-          category = "obsidian",
-        },
-        fail = { raw = "[!FAIL]", rendered = "󰅖 Fail", highlight = "RenderMarkdownError", category = "obsidian" },
-        missing = {
-          raw = "[!MISSING]",
-          rendered = "󰅖 Missing",
-          highlight = "RenderMarkdownError",
-          category = "obsidian",
-        },
-        danger = {
-          raw = "[!DANGER]",
-          rendered = "󱐌 Danger",
-          highlight = "RenderMarkdownError",
-          category = "obsidian",
-        },
-        error = { raw = "[!ERROR]", rendered = "󱐌 Error", highlight = "RenderMarkdownError", category = "obsidian" },
-        bug = { raw = "[!BUG]", rendered = "󰨰 Bug", highlight = "RenderMarkdownError", category = "obsidian" },
-        example = {
-          raw = "[!EXAMPLE]",
-          rendered = "󰉹 Example",
-          highlight = "RenderMarkdownHint",
-          category = "obsidian",
-        },
-        quote = { raw = "[!QUOTE]", rendered = "󱆨 Quote", highlight = "RenderMarkdownQuote", category = "obsidian" },
-        cite = { raw = "[!CITE]", rendered = "󱆨 Cite", highlight = "RenderMarkdownQuote", category = "obsidian" },
-      },
-      link = {
-        custom = {
-          heading = { pattern = "^#", icon = " " },
-          note = { pattern = "%.md$", icon = " " },
-        },
-      },
 
       completions = {
         blink = { enabled = true },
         -- lsp = { enabled = true },
+      },
+      quote = { repeat_linebreak = true },
+      win_options = {
+        showbreak = {
+          default = "",
+          rendered = "  ",
+        },
+        breakindent = {
+          default = false,
+          rendered = true,
+        },
+        breakindentopt = {
+          default = "",
+          rendered = "",
+        },
       },
     },
     ft = { "markdown", "norg", "rmd", "org", "codecompanion" },
@@ -228,10 +145,78 @@ return {
   },
   {
     "HakonHarnes/img-clip.nvim",
-    ft = { "markdown", "norg", "rmd", "org", "codecompanion" },
+    ft = { "markdown", "norg", "rmd", "org", "codecompanion", "oil" },
+    opts = {
+      default = {
+        extension = "png",
+        file_name = "%Y%m%d-%H%M%S",
+        use_absolute_path = false,
+        relative_to_current_file = true,
+        prompt_for_file_name = false,
+        show_dir_path_in_prompt = false,
+        drag_and_drop = {
+          enabled = true,
+          insert_mode = true,
+        },
+      },
+      dirs = {
+        ["/Users/hsp/Obsidian Vault"] = {
+          dir_path = function()
+            return vim.fn.expand("%:t:r") .. ".assets"
+          end,
+          filetypes = {
+            markdown = {
+              template = "![[$FILE_PATH]]",
+              url_encode_path = false,
+              relative_template_path = true,
+            },
+          },
+        },
+      },
+    },
     keys = {
-      -- suggested keymap
-      { "<leader>p", "<cmd>PasteImage<cr>", ft = "markdown", desc = "Paste image from system clipboard" },
+      {
+        "<leader>pp",
+        "<cmd>PasteImage<cr>",
+        ft = "markdown",
+        desc = "Markdown: Paste image from clipboard",
+      },
+      {
+        "<leader>po",
+        function()
+          local oil = require("oil")
+          local entry = oil.get_cursor_entry()
+          local dir = oil.get_current_dir()
+
+          if not entry or not dir then
+            return
+          end
+
+          local path = dir .. entry.name
+          oil.close()
+          require("img-clip").paste_image({}, path)
+        end,
+        ft = "oil",
+        desc = "Markdown: Insert image from Oil",
+      },
+      {
+        "<leader>ps",
+        function()
+          Snacks.picker.files({
+            cwd = "/Users/hsp/Obsidian Vault",
+            hidden = true,
+            follow = true,
+            include = { "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif" },
+            confirm = function(self, item, _)
+              self:close()
+              local path = vim.fs.joinpath("/Users/hsp/Obsidian Vault", item.file)
+              require("img-clip").paste_image({}, path)
+            end,
+          })
+        end,
+        ft = "markdown",
+        desc = "Markdown: Pick image with Snacks",
+      },
     },
   },
   {
@@ -239,6 +224,29 @@ return {
     ft = "markdown", -- Lazy loads for Markdown files matching patterns in 'files'
     opts = {
       files = { "*.md" },
+
+      todo_states = {
+        -- Built-in states (cannot change markdown or type)
+        unchecked = { marker = "󰄱 " },
+        checked = { marker = "󰄵 " },
+
+        -- Custom states
+        in_progress = {
+          marker = "◐",
+          markdown = ".", -- Saved as `- [.]`
+          type = "incomplete", -- Counts as "not done"
+          order = 50,
+        },
+
+        on_hold = {
+          marker = "⏸ ",
+          markdown = "/", -- Saved as `- [/]`
+          type = "inactive", -- Ignored in counts
+          order = 100,
+        },
+      },
+      style = {}, -- override defaults
+
       keys = { -- TODO: Move to the keymappings file.
         ["<leader>mc"] = {
           rhs = "<cmd>Checkmate toggle<CR>",
