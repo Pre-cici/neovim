@@ -67,20 +67,23 @@ return {
 
         render = function(props)
           local buf = props.buf
-          local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ':t')
+          local full_path = vim.api.nvim_buf_get_name(buf)
+          local filename = vim.fn.fnamemodify(full_path, ':t')
+          local display_path = vim.fn.fnamemodify(full_path, ':.')
 
           if filename == '' then
             filename = '[No Name]'
+            display_path = filename
           end
           if vim.bo[buf].modified then
-            filename = '[+] ' .. filename
+            display_path = '[+] ' .. display_path
           end
 
           local icon, color = require('nvim-web-devicons').get_icon_color(filename)
           local res = {
             { icon, guifg = color, gui = 'italic' },
             { ' ', gui = 'italic' },
-            { filename, gui = 'italic' },
+            { display_path, gui = 'italic' },
           }
 
           return res

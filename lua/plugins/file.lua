@@ -42,6 +42,7 @@ return {
         ['<leader>r'] = 'actions.refresh',
 
         ['<leader>y'] = 'actions.yank_entry', -- yank full path
+        ['Y'] = 'actions.yank_entry', -- yank full path
 
         ["gp"] = "actions.preview",
         ["<A-p>"] = "actions.preview",
