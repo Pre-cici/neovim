@@ -145,78 +145,14 @@ return {
   },
   {
     "HakonHarnes/img-clip.nvim",
-    ft = { "markdown", "norg", "rmd", "org", "codecompanion", "oil" },
+    event = "VeryLazy",
     opts = {
-      default = {
-        extension = "png",
-        file_name = "%Y%m%d-%H%M%S",
-        use_absolute_path = false,
-        relative_to_current_file = true,
-        prompt_for_file_name = false,
-        show_dir_path_in_prompt = false,
-        drag_and_drop = {
-          enabled = true,
-          insert_mode = true,
-        },
-      },
-      dirs = {
-        ["/Users/hsp/Obsidian Vault"] = {
-          dir_path = function()
-            return vim.fn.expand("%:t:r") .. ".assets"
-          end,
-          filetypes = {
-            markdown = {
-              template = "![[$FILE_PATH]]",
-              url_encode_path = false,
-              relative_template_path = true,
-            },
-          },
-        },
-      },
+      -- add options here
+      -- or leave it empty to use the default settings
     },
     keys = {
-      {
-        "<leader>pp",
-        "<cmd>PasteImage<cr>",
-        ft = "markdown",
-        desc = "Markdown: Paste image from clipboard",
-      },
-      {
-        "<leader>po",
-        function()
-          local oil = require("oil")
-          local entry = oil.get_cursor_entry()
-          local dir = oil.get_current_dir()
-
-          if not entry or not dir then
-            return
-          end
-
-          local path = dir .. entry.name
-          oil.close()
-          require("img-clip").paste_image({}, path)
-        end,
-        ft = "oil",
-        desc = "Markdown: Insert image from Oil",
-      },
-      {
-        "<leader>ps",
-        function()
-          Snacks.picker.files({
-            cwd = "/Users/hsp/Obsidian Vault",
-            hidden = true,
-            follow = true,
-            include = { "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif" },
-            confirm = function(self, item, _)
-              self:close()
-              local path = vim.fs.joinpath("/Users/hsp/Obsidian Vault", item.file)
-              require("img-clip").paste_image({}, path)
-            end,
-          })
-        end,
-        ft = "markdown",
-        desc = "Markdown: Pick image with Snacks",
-      },
+      -- suggested keymap
+      { "<leader>p", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
     },
   },
   {
