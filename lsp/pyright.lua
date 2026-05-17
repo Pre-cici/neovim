@@ -4,24 +4,26 @@
 ---
 --- `pyright`, a static type checker and language server for python
 
-local function set_python_path(command)
-  local path = command.args
-  local clients = vim.lsp.get_clients({
-    bufnr = vim.api.nvim_get_current_buf(),
-    name = "pyright",
-  })
-  for _, client in ipairs(clients) do
-    if client.settings then
-      client.settings.python =
-        vim.tbl_deep_extend("force", client.settings.python --[[@as table]], { pythonPath = path })
-    else
-      client.config.settings = vim.tbl_deep_extend("force", client.config.settings, { python = { pythonPath = path } })
-    end
-    client:notify("workspace/didChangeConfiguration", { settings = nil })
-  end
-end
+local python_utils = require("utils.python")
 
-local python_utils = require('utils.python')
+local function get_python(bufnr)
+  local root = python_utils.project_root(bufnr)
+  local venv_python = root .. "/.venv/bin/python"
+
+  if vim.fn.executable(venv_python) == 1 then
+    return venv_python
+  end
+
+  local ok, venv_selector = pcall(require, "venv-selector")
+  if ok then
+    local python = venv_selector.python()
+    if python and python ~= "" then
+      return python
+    end
+  end
+
+  return vim.fn.exepath("python3") ~= "" and vim.fn.exepath("python3") or "python3"
+end
 
 ---@type vim.lsp.Config
 return {
@@ -49,8 +51,20 @@ return {
     },
   },
   on_attach = function(client, bufnr)
-    python_utils.ensure_pythonpath_autocmd()
-    python_utils.prepend_env('PYTHONPATH', python_utils.project_root(bufnr))
+    local python = get_python(bufnr)
+
+    client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, {
+      python = {
+        pythonPath = python,
+        analysis = {
+          autoSearchPaths = true,
+          useLibraryCodeForTypes = true,
+          diagnosticMode = "openFilesOnly",
+        },
+      },
+    })
+
+    client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
 
     vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightSetPythonPath", set_python_path, {
       desc = "Reconfigure pyright with the provided python path",

@@ -1,22 +1,22 @@
 local M = {}
 
-local overseer = require('utils.overseer')
-local root_utils = require('utils.root')
+local overseer = require("utils.overseer")
+local root_utils = require("utils.root")
 
 local function active_python()
-  local ok, venv_selector = pcall(require, 'venv-selector')
+  local ok, venv_selector = pcall(require, "venv-selector")
   if ok then
     local python = venv_selector.python()
-    if python and python ~= '' then
+    if python and python ~= "" then
       return python
     end
   end
 
-  local python = vim.fn.exepath('python3')
-  if python ~= '' then
+  local python = vim.fn.exepath("python3")
+  if python ~= "" then
     return python
   end
-  return 'python3'
+  return "python3"
 end
 
 local function current_file()
@@ -24,7 +24,7 @@ local function current_file()
 end
 
 local function is_test_name(name)
-  return name and name:match('^test_')
+  return name and name:match("^test_")
 end
 
 local function nearest_pytest_target(bufnr)
@@ -33,9 +33,9 @@ local function nearest_pytest_target(bufnr)
   local stack = {}
 
   for linenr, line in ipairs(lines) do
-    local indent, kind, name = line:match('^(%s*)(class)%s+([%w_]+)')
+    local indent, kind, name = line:match("^(%s*)(class)%s+([%w_]+)")
     if not kind then
-      indent, kind, name = line:match('^(%s*)(def)%s+([%w_]+)')
+      indent, kind, name = line:match("^(%s*)(def)%s+([%w_]+)")
     end
 
     if kind and name then
@@ -44,7 +44,7 @@ local function nearest_pytest_target(bufnr)
         table.remove(stack)
       end
 
-      if kind == 'class' or is_test_name(name) then
+      if kind == "class" or is_test_name(name) then
         table.insert(stack, { indent = width, kind = kind, name = name, line = linenr })
       end
     end
@@ -52,7 +52,7 @@ local function nearest_pytest_target(bufnr)
 
   local parts = {}
   for _, item in ipairs(stack) do
-    if item.kind == 'class' or is_test_name(item.name) then
+    if item.kind == "class" or is_test_name(item.name) then
       table.insert(parts, item.name)
     end
   end
@@ -61,7 +61,7 @@ local function nearest_pytest_target(bufnr)
     return nil
   end
 
-  return table.concat(parts, '::')
+  return table.concat(parts, "::")
 end
 
 function M.project_root(bufnr)
@@ -69,13 +69,13 @@ function M.project_root(bufnr)
 end
 
 function M.prepend_env(name, value)
-  local sep = ':'
-  local cur = vim.env[name] or ''
-  if cur == '' then
+  local sep = ":"
+  local cur = vim.env[name] or ""
+  if cur == "" then
     vim.env[name] = value
     return
   end
-  for entry in string.gmatch(cur, '([^' .. sep .. ']+)') do
+  for entry in string.gmatch(cur, "([^" .. sep .. "]+)") do
     if entry == value then
       return
     end
@@ -83,24 +83,24 @@ function M.prepend_env(name, value)
   vim.env[name] = value .. sep .. cur
 end
 
-function M.ensure_pythonpath_autocmd()
-  vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-    group = vim.api.nvim_create_augroup('user_pythonpath_root', { clear = true }),
-    pattern = '*.py',
-    callback = function(event)
-      M.prepend_env('PYTHONPATH', M.project_root(event.buf))
-    end,
-  })
-end
+-- function M.ensure_pythonpath_autocmd()
+--   vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+--     group = vim.api.nvim_create_augroup('user_pythonpath_root', { clear = true }),
+--     pattern = '*.py',
+--     callback = function(event)
+--       M.prepend_env('PYTHONPATH', M.project_root(event.buf))
+--     end,
+--   })
+-- end
 
 function M.run_current_file_task()
   local file = current_file()
-  if file == '' then
-    return vim.notify('Save the current Python buffer first', vim.log.levels.WARN)
+  if file == "" then
+    return vim.notify("Save the current Python buffer first", vim.log.levels.WARN)
   end
 
   overseer.run({
-    name = string.format('python %s', vim.fn.fnamemodify(file, ':t')),
+    name = string.format("python %s", vim.fn.fnamemodify(file, ":t")),
     cmd = active_python(),
     args = { file },
     cwd = M.project_root(0),
