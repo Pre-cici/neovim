@@ -206,7 +206,7 @@ return {
 
       { "<leader>ds", function() require("dap").session() end, desc = "Session" },
       { "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },
-      { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Hover Widget" },
+      { "<leader>dh", function() require("dap.ui.widgets").hover() end, desc = "Hover Widget" },
       { "<leader>dU", function() local dapui = require("dapui") dapui.close({}) vim.schedule(function() dapui.open({ reset = true }) end) end, desc = "Dap UI Reset Layout", },
       { "<leader>dr", function() require("dapui").float_element("repl", { enter = true, width = 100, height = 25, position = "center", }) end, desc = "DAP REPL Float", },
 
