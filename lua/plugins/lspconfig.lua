@@ -1,68 +1,83 @@
 return {
   {
     -- Autoformat
-    'stevearc/conform.nvim',
-    event = { 'BufWritePre' },
-    cmd = { 'ConformInfo' },
+    "stevearc/conform.nvim",
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
     keys = {
       {
-        '<leader>cf',
+        "<leader>cf",
         function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
+          require("conform").format({ async = true, lsp_format = "fallback" })
         end,
-        mode = '',
-        desc = 'Format buffer',
+        mode = "",
+        desc = "Format buffer",
       },
     },
     opts = {
       notify_on_error = false,
       format_on_save = false,
       formatters_by_ft = {
-        lua = { 'stylua' },
+        lua = { "stylua" },
 
         python = { -- To fix auto-fixable lint errors.
-          'ruff_fix',
+          "ruff_fix",
           -- To organize the imports.
-          'ruff_organize_imports',
+          "ruff_organize_imports",
           -- To run the Ruff formatter.
-          'ruff_format',
+          "ruff_format",
         },
 
-        markdown = { 'prettier' },
+        markdown = { "prettier" },
+        json = { "prettier" },
+        jsonc = { "prettier" },
 
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        bigfile = function(bufnr)
+          local ft = vim.filetype.match({ buf = bufnr })
+          if ft then
+            return require("conform").formatters_by_ft[ft]
+          end
+        end,
+      },
+      formatters = {
+        prettier = {
+          options = {
+            ft_parsers = {
+              jsonl = "json",
+            },
+          },
+        },
       },
     },
   },
 
   {
-    'mason-org/mason.nvim',
-    event = { 'BufReadPre', 'BufNewFile' },
-    cmd = 'Mason',
-    keys = { { '<leader>cm', '<cmd>Mason<cr>', desc = 'Mason' } },
-    build = ':MasonUpdate',
-    opts_extend = { 'ensure_installed' },
+    "mason-org/mason.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    cmd = "Mason",
+    keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
+    build = ":MasonUpdate",
+    opts_extend = { "ensure_installed" },
     opts = {
       ensure_installed = {
-        'stylua',
-        'lua-language-server',
-        'pyright',
-        'ruff',
-        'marksman',
+        "stylua",
+        "lua-language-server",
+        "pyright",
+        "ruff",
+        "marksman",
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
     config = function(_, opts)
-      require('mason').setup(opts)
-      local mr = require 'mason-registry'
-      mr:on('package:install:success', function()
+      require("mason").setup(opts)
+      local mr = require("mason-registry")
+      mr:on("package:install:success", function()
         vim.defer_fn(function()
           -- trigger FileType event to possibly load this newly installed LSP server
-          require('lazy.core.handler.event').trigger {
-            event = 'FileType',
+          require("lazy.core.handler.event").trigger({
+            event = "FileType",
             buf = vim.api.nvim_get_current_buf(),
-          }
+          })
         end, 100)
       end)
 
