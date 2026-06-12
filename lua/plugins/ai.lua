@@ -36,6 +36,15 @@ return {
       ---@type opencode.Opts
       vim.g.opencode_opts = {
         server = opencode_utils.server_opts(opencode_cmd, opencode_width),
+        events = {
+          reload = true,
+          permissions = {
+            enabled = true,
+            edits = {
+              enabled = false,
+            },
+          },
+        },
       }
 
       vim.api.nvim_create_autocmd("ExitPre", {
