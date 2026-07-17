@@ -51,7 +51,6 @@ return {
           { '<leader>d', group = 'debug' },
           { '<leader>f', group = 'file/find' },
           { '<leader>g', group = 'git' },
-          { '<leader>l', group = 'leetcode' },
           { '<leader>q', group = 'quit/session' },
           { '<leader>s', group = 'search' },
           { '<leader>t', group = 'toggle' },

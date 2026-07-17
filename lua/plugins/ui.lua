@@ -13,44 +13,158 @@ return {
       local alpha = require("alpha")
       local dashboard = require("alpha.themes.dashboard")
 
-      local function footer()
+      local function set_dashboard_highlights()
+        local colors = require("catppuccin.palettes").get_palette()
+        local highlights = {
+          DashboardLogo1 = { fg = colors.mauve, bold = true },
+          DashboardLogo2 = { fg = colors.lavender, bold = true },
+          DashboardLogo3 = { fg = colors.blue, bold = true },
+          DashboardLogo4 = { fg = colors.sapphire, bold = true },
+          DashboardLogo5 = { fg = colors.teal, bold = true },
+          DashboardFrameAccent = { fg = colors.sapphire, bold = true },
+          DashboardTitle = { fg = colors.lavender, bold = true },
+          DashboardPath = { fg = colors.subtext0, italic = true },
+          DashboardButton = { fg = colors.subtext1 },
+          DashboardShortcut = { fg = colors.peach, bold = true },
+          DashboardIconBlue = { fg = colors.blue },
+          DashboardIconGreen = { fg = colors.green },
+          DashboardIconMauve = { fg = colors.mauve },
+          DashboardIconPeach = { fg = colors.peach },
+          DashboardIconRed = { fg = colors.red },
+          DashboardIconTeal = { fg = colors.teal },
+          DashboardFooter = { fg = colors.overlay0, italic = true },
+        }
+
+        for name, opts in pairs(highlights) do
+          vim.api.nvim_set_hl(0, name, opts)
+        end
+      end
+
+      set_dashboard_highlights()
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("dashboard_highlights", { clear = true }),
+        callback = set_dashboard_highlights,
+      })
+
+      local function button(shortcut, icon, label, action, icon_hl)
+        local item = dashboard.button(shortcut, icon .. "  " .. label, type(action) == "string" and action or nil)
+        if type(action) == "function" then
+          item.on_press = action
+          item.opts.keymap = { "n", shortcut, action, { noremap = true, silent = true, nowait = true } }
+        end
+        item.opts.hl = {
+          { icon_hl, 0, #icon },
+          { "DashboardButton", #icon, -1 },
+        }
+        item.opts.hl_shortcut = "DashboardShortcut"
+        return item
+      end
+
+      local function plugin_summary()
         local stats = require("lazy").stats()
         local loaded = stats.loaded or 0
         local total = stats.count or loaded
-        local deferred = math.max(total - loaded, 0)
-        return string.format("%.2f ms startup, %d loaded, %d deferred", stats.startuptime or 0, loaded, deferred)
+        return string.format("󰏖  %d/%d plugins loaded  ·  󰔟 %.2f ms", loaded, total, stats.startuptime or 0)
+      end
+
+      local banner_width = 69
+      local function banner_rule(left, label, right)
+        local text = " " .. label .. " "
+        local fill = banner_width - vim.fn.strdisplaywidth(text) - 2
+        local left_fill = math.floor(fill / 2)
+        return left .. string.rep("─", left_fill) .. text .. string.rep("─", fill - left_fill) .. right
+      end
+
+      local logo_lines = {
+        [=[ __        ______  ____  __ __  _____ __  ______  ____ ]=],
+        [=[ \ \      / / __ \/ __ \/ //_/ / ___// / / / __ \/ __ \]=],
+        [=[  \ \ /\ / / / / / /_/ / ,<    \__ \/ /_/ / / / / /_/ /]=],
+        [=[   \ V  V / /_/ / _, _/ /| |  ___/ / __  / /_/ / ____/]=],
+        [=[    \_/\_/\____/_/ |_/_/ |_| /____/_/ /_/\____/_/]=],
+        [=[                                                 ]=],
+      }
+      local logo_width = 0
+      for _, line in ipairs(logo_lines) do
+        logo_width = math.max(logo_width, vim.fn.strdisplaywidth(line))
+      end
+      local logo_indent = math.floor((banner_width - logo_width) / 2)
+
+      local function banner_text(line)
+        local padding = banner_width - vim.fn.strdisplaywidth(line) - logo_indent
+        return string.rep(" ", logo_indent) .. line .. string.rep(" ", padding)
       end
 
       dashboard.section.header.val = {
-        "███╗   ██╗██╗   ██╗██╗███╗   ███╗",
-        "████╗  ██║██║   ██║██║████╗ ████║",
-        "██╔██╗ ██║██║   ██║██║██╔████╔██║",
-        "██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║",
-        "██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║",
-        "╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
+        banner_rule("╭", "N E O V I M  //  C Y B E R  W O R K S H O P", "╮"),
+        banner_text(logo_lines[1]),
+        banner_text(logo_lines[2]),
+        banner_text(logo_lines[3]),
+        banner_text(logo_lines[4]),
+        banner_text(logo_lines[5]),
+        banner_text(logo_lines[6]),
+        banner_rule("╰", "C O D E  ·  B U I L D  ·  R E P E A T", "╯"),
+      }
+
+      dashboard.section.header.opts.hl = {
+        { { "DashboardFrameAccent", 0, -1 } },
+        { { "DashboardLogo1", 0, -1 } },
+        { { "DashboardLogo2", 0, -1 } },
+        { { "DashboardLogo3", 0, -1 } },
+        { { "DashboardLogo4", 0, -1 } },
+        { { "DashboardLogo5", 0, -1 } },
+        { { "DashboardFrameAccent", 0, -1 } },
+        { { "DashboardFrameAccent", 0, -1 } },
+      }
+
+      local root = require("utils.root").project_root(vim.uv.cwd())
+      local welcome = {
+        type = "text",
+        val = string.format("Welcome back, %s! Today is %s", vim.env.USER or "user", os.date("%A, %d %B %Y")),
+        opts = { position = "center", hl = "DashboardTitle" },
+      }
+
+      local working_directory = {
+        type = "text",
+        val = "You're working in " .. vim.fn.fnamemodify(root, ":~"),
+        opts = { position = "center", hl = "DashboardPath" },
+      }
+
+      local plugins = {
+        type = "text",
+        val = plugin_summary(),
+        opts = { position = "center", hl = "DashboardFooter" },
       }
 
       dashboard.section.buttons.val = {
-        dashboard.button("e", "  New file", "<cmd>ene<cr>"),
-        dashboard.button("f", "  Find file", function()
+        button("e", "", "New file", "<cmd>ene<cr>", "DashboardIconGreen"),
+        button("f", "", "Find file", function()
           Snacks.picker.files({ layout = { preset = "telescope" }, cwd = vim.uv.cwd() })
-        end),
-        dashboard.button("r", "  Recent files", function()
-          Snacks.picker.recent({ layout = { preset = "telescope" }, cwd = vim.uv.cwd() })
-        end),
-        dashboard.button("p", "  Projects", function()
+        end, "DashboardIconBlue"),
+        button("p", "", "Projects", function()
           Snacks.picker.projects({ layout = { preset = "select" } })
-        end),
-        dashboard.button("s", "󰁯  Restore session", function()
+        end, "DashboardIconPeach"),
+        button("s", "󰁯", "Restore session", function()
           require("persistence").load()
-        end),
-        dashboard.button("L", "󰈸  LeetCode", "<cmd>Leet<cr>"),
-        dashboard.button("c", "  Open config", "<cmd>Oil ~/.config/nvim<cr>"),
-        dashboard.button("l", "󰒲  Lazy", "<cmd>Lazy<cr>"),
-        dashboard.button("q", "  Quit", "<cmd>qa<cr>"),
+        end, "DashboardIconMauve"),
+        button("m", "󰈸", "LeetCode", "<cmd>Leet<cr>", "DashboardIconRed"),
+        button("c", "", "Open config", "<cmd>Oil ~/.config/nvim<cr>", "DashboardIconBlue"),
+        button("l", "󰒲", "Lazy", "<cmd>Lazy<cr>", "DashboardIconMauve"),
+        button("q", "", "Quit", "<cmd>qa<cr>", "DashboardIconRed"),
       }
+      dashboard.section.buttons.opts.spacing = 1
 
-      dashboard.section.footer.val = { footer() }
+      dashboard.config.layout = {
+        { type = "padding", val = 4 },
+        dashboard.section.header,
+        { type = "padding", val = 4 },
+        welcome,
+        { type = "padding", val = 1 },
+        working_directory,
+        { type = "padding", val = 3 },
+        dashboard.section.buttons,
+        { type = "padding", val = 1 },
+        plugins,
+      }
 
       dashboard.opts.opts.noautocmd = true
       alpha.setup(dashboard.opts)
@@ -59,7 +173,7 @@ return {
         once = true,
         pattern = "VeryLazy",
         callback = function()
-          dashboard.section.footer.val = { footer() }
+          plugins.val = plugin_summary()
           pcall(vim.cmd.AlphaRedraw)
         end,
       })
@@ -97,11 +211,12 @@ return {
       vim.opt.splitkeep = "screen"
     end,
     opts = {
+      animate = { enabled = false },
       bottom = {
         {
           ft = "snacks_terminal",
           filter = function(buf)
-            return not terminal_utils.snacks_terminal_cmd_starts_with(buf, "opencode --port")
+            return not terminal_utils.snacks_terminal_cmd_contains(buf, "opencode attach")
               and not terminal_utils.snacks_terminal_cmd_starts_with(buf, "lazygit")
           end,
           size = { height = 0.3 },
@@ -112,7 +227,7 @@ return {
         {
           ft = "snacks_terminal",
           filter = function(buf)
-            return terminal_utils.snacks_terminal_cmd_starts_with(buf, "opencode --port")
+            return terminal_utils.snacks_terminal_cmd_contains(buf, "opencode attach")
           end,
           size = { width = 0.35 },
           title = "Opencode",

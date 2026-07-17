@@ -4,9 +4,6 @@ return {
     -- used for completion, annotations and signatures of Neovim apis
     "folke/lazydev.nvim",
     ft = "lua",
-    dependencies = {
-      { "DrKJeff16/wezterm-types", lazy = true, version = false }, -- Get the latest version
-    },
     opts = {
       library = {
         "lazy.nvim",
@@ -31,7 +28,7 @@ return {
   { -- Autocompletion
 
     "saghen/blink.cmp",
-    event = { "InsertEnter", "CmdlineEnter" },
+    event = { "BufReadPre", "BufNewFile", "InsertEnter", "CmdlineEnter" },
 
     version = "1.*",
     dependencies = {
@@ -92,8 +89,11 @@ return {
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
 
         -- show with a list of providers
-        ["<C-s>"] = { function(cmp) cmp.show({ providers = { "snippets" } }) end, },
-
+        ["<C-s>"] = {
+          function(cmp)
+            cmp.show({ providers = { "snippets" } })
+          end,
+        },
       },
 
       appearance = {
@@ -139,7 +139,7 @@ return {
         },
       },
       sources = {
-        default = { "snippets", "lsp", "path", "lazydev" },
+        default = { "snippets", "lsp", "path", "lazydev", "buffer" },
         providers = {
           lazydev = { module = "lazydev.integrations.blink", score_offset = 1 },
         },

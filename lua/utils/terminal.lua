@@ -46,4 +46,9 @@ function M.snacks_terminal_cmd_starts_with(buf, prefix)
   return type(cmdline) == "string" and cmdline:match("^" .. vim.pesc(prefix)) ~= nil
 end
 
+function M.snacks_terminal_cmd_contains(buf, value)
+  local cmdline = snacks_terminal_cmdline(buf)
+  return type(cmdline) == "string" and cmdline:find(value, 1, true) ~= nil
+end
+
 return M

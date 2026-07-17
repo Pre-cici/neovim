@@ -1,4 +1,4 @@
-local root_utils = require 'utils.root'
+local root_utils = require("utils.root")
 
 -- TODO: layout / show path / change path
 return {
@@ -13,7 +13,6 @@ return {
           keys = {
 
             ["`"] = { "print_cwd", mode = { "n", "i" } },
-
             ["<Esc>"] = { "close", mode = { "n", "i" } },
             ["<C-c>"] = { "close", mode = { "n", "i" } },
 
@@ -34,11 +33,22 @@ return {
 
             ["<a-s>"] = { "edit_split", mode = { "i", "n" } },
             ["<a-v>"] = { "edit_vsplit", mode = { "i", "n" } },
+
+            ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
           },
         },
       },
-        actions = {
-          toggle_cwd = function(p)
+      actions = {
+        opencode_send = function(picker) ---@param picker snacks.Picker
+          local items = vim.tbl_map(function(item) ---@param item snacks.picker.Item
+            return item.file and require("opencode").format({ path = item.file, from = item.pos, to = item.end_pos })
+              or item.text
+          end, picker:selected({ fallback = true }))
+
+          require("opencode").prompt(table.concat(items, ", ") .. " ")
+        end,
+
+        toggle_cwd = function(p)
           local root = vim.fs.normalize(root_utils.git_root(p.input.filter.current_buf))
           local cwd = vim.fs.normalize(vim.uv.cwd() or ".")
           local current = p:cwd()

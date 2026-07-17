@@ -11,7 +11,7 @@ return {
     event = "VeryLazy",
     opts = {
       show_stop_reason = false,
-      virt_text_pos = 'eol',
+      virt_text_pos = "eol",
     },
   },
 
@@ -19,40 +19,10 @@ return {
     "mfussenegger/nvim-dap-python",
     ft = "python",
     config = function()
+      local python_utils = require("utils.python")
+
       local function get_project_root()
-        local root = vim.fs.root(0, {
-          "uv.lock",
-          "pyproject.toml",
-          ".git",
-          "setup.py",
-          "setup.cfg",
-          "requirements.txt",
-          "environment.yml",
-          "conda.yaml",
-        })
-
-        return root or vim.fn.getcwd()
-      end
-
-      local function get_python()
-        local root = get_project_root()
-        local venv_python = root .. "/.venv/bin/python"
-
-        if vim.fn.executable(venv_python) == 1 then
-          return venv_python
-        end
-
-        local venv = os.getenv("VIRTUAL_ENV")
-        if venv and vim.fn.executable(venv .. "/bin/python") == 1 then
-          return venv .. "/bin/python"
-        end
-
-        local conda = os.getenv("CONDA_PREFIX")
-        if conda and vim.fn.executable(conda .. "/bin/python") == 1 then
-          return conda .. "/bin/python"
-        end
-
-        return "python3"
+        return python_utils.project_root(0)
       end
 
       local function get_env()
@@ -62,14 +32,25 @@ return {
         }
       end
 
-      -- Adapter Python: 优先使用 Mason 安装的 debugpy
-      -- Target Python: 由每个 launch 配置里的 pythonPath 指定为项目 .venv
+      local function get_args()
+        local args = vim.fn.input({
+          prompt = "Arguments: ",
+          completion = "file",
+        })
+
+        return require("dap.utils").splitstr(args)
+      end
+
       local mason_debugpy = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+      local dap_python = require("dap-python")
 
       if vim.fn.executable(mason_debugpy) == 1 then
-        require("dap-python").setup(mason_debugpy)
+        dap_python.setup(mason_debugpy)
       else
-        require("dap-python").setup(get_python())
+        dap_python.setup(python_utils.active_python(0))
+      end
+      dap_python.resolve_python = function()
+        return python_utils.active_python(0)
       end
 
       local dap = require("dap")
@@ -81,9 +62,8 @@ return {
           name = "file",
           program = "${file}",
           cwd = get_project_root,
-          pythonPath = get_python,
           console = "integratedTerminal",
-          justMyCode = false,
+          justMyCode = true,
           env = get_env,
         },
 
@@ -93,20 +73,9 @@ return {
           name = "file:args",
           program = "${file}",
           cwd = get_project_root,
-          pythonPath = get_python,
           console = "integratedTerminal",
-          justMyCode = false,
-          args = function()
-            local root = get_project_root()
-            vim.cmd("lcd " .. vim.fn.fnameescape(root))
-
-            local args = vim.fn.input({
-              prompt = "Arguments: ",
-              completion = "file",
-            })
-
-            return require("dap.utils").splitstr(args)
-          end,
+          justMyCode = true,
+          args = get_args,
           env = get_env,
         },
 
@@ -118,20 +87,9 @@ return {
             return vim.fn.input("Module: ")
           end,
           cwd = get_project_root,
-          pythonPath = get_python,
           console = "integratedTerminal",
-          justMyCode = false,
-          args = function()
-            local root = get_project_root()
-            vim.cmd("lcd " .. vim.fn.fnameescape(root))
-
-            local args = vim.fn.input({
-              prompt = "Arguments: ",
-              completion = "file",
-            })
-
-            return require("dap.utils").splitstr(args)
-          end,
+          justMyCode = true,
+          args = get_args,
           env = get_env,
         },
 
@@ -151,8 +109,7 @@ return {
             }
           end,
           cwd = get_project_root,
-          pythonPath = get_python,
-          justMyCode = false,
+          justMyCode = true,
         },
       }
     end,
@@ -306,7 +263,7 @@ return {
         python = function() end,
       },
       ensure_installed = {
-        "debugpy",
+        "python",
       },
     },
     config = function(_, opts)

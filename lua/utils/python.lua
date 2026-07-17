@@ -3,12 +3,26 @@ local M = {}
 local overseer = require("utils.overseer")
 local root_utils = require("utils.root")
 
-local function active_python()
+function M.active_python(bufnr)
   local ok, venv_selector = pcall(require, "venv-selector")
   if ok then
     local python = venv_selector.python()
-    if python and python ~= "" then
+    if python and python ~= "" and vim.fn.executable(python) == 1 then
       return python
+    end
+  end
+
+  local root = M.project_root(bufnr)
+  local project_python = root and vim.fs.joinpath(root, ".venv", "bin", "python")
+  if project_python and vim.fn.executable(project_python) == 1 then
+    return project_python
+  end
+
+  for _, env in ipairs({ "VIRTUAL_ENV", "CONDA_PREFIX" }) do
+    local prefix = vim.env[env]
+    local env_python = prefix and vim.fs.joinpath(prefix, "bin", "python")
+    if env_python and vim.fn.executable(env_python) == 1 then
+      return env_python
     end
   end
 
@@ -99,11 +113,14 @@ function M.run_current_file_task()
     return vim.notify("Save the current Python buffer first", vim.log.levels.WARN)
   end
 
+  local root = M.project_root(0)
+  local pythonpath = vim.env.PYTHONPATH
   overseer.run({
     name = string.format("python %s", vim.fn.fnamemodify(file, ":t")),
-    cmd = active_python(),
+    cmd = M.active_python(0),
     args = { file },
-    cwd = M.project_root(0),
+    cwd = root,
+    env = { PYTHONPATH = pythonpath and root .. ":" .. pythonpath or root },
     components = overseer.default_components(),
   })
 end

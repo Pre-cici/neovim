@@ -228,4 +228,42 @@ function M.venv_component()
   }
 end
 
+function M.opencode_component()
+  return {
+    provider = function()
+      return '  ' .. require('opencode').statusline():gsub('%S+:(%d+)$', '%1')
+    end,
+    hl = { fg = 'blue', bold = true },
+    update = {
+      'User',
+      pattern = {
+        'OpencodeEvent:server.connected',
+        'OpencodeEvent:session.status',
+        'OpencodeEvent:server.instance.disposed',
+      },
+      callback = vim.schedule_wrap(function()
+        vim.cmd 'redrawstatus'
+      end),
+    },
+    on_click = {
+      name = 'heirline_opencode_server_select',
+      callback = function()
+        vim.schedule(function()
+          require('opencode.server.discovery')
+            .locally()
+            :next(require('opencode.ui.select_server').select_server)
+            :next(function(server)
+              return server:connect()
+            end)
+            :catch(function(err)
+              if err then
+                vim.notify(err, vim.log.levels.ERROR, { title = 'opencode' })
+              end
+            end)
+        end)
+      end,
+    },
+  }
+end
+
 return M

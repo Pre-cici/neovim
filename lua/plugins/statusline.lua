@@ -13,6 +13,7 @@ return {
       local WorkDir = statusline_utils.work_dir(conditions)
       local HelpFileName = statusline_utils.help_file_name()
       local VenvComponent = statusline_utils.venv_component()
+      local OpenCode = statusline_utils.opencode_component()
 
       return {
         opts = {
@@ -42,6 +43,7 @@ return {
           LspClients,
           -- lib.component.compiler_state(),
           VenvComponent,
+          OpenCode,
           lib.component.nav { percentage = false },
         },
       }

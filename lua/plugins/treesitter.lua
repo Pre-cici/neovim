@@ -121,68 +121,38 @@ return {
     dependencies = { "nvim-treesitter/nvim-treesitter" },
 
     config = function()
-      local ok, configs = pcall(require, "nvim-treesitter.configs")
-      if ok then
-        configs.setup({
-          textobjects = {
-            select = {
-              enable = true,
-              lookahead = true,
-              keymaps = {
-                ["ab"] = { query = "@block.outer", desc = "around block" },
-                ["ib"] = { query = "@block.inner", desc = "inside block" },
-                ["ac"] = { query = "@class.outer", desc = "around class" },
-                ["ic"] = { query = "@class.inner", desc = "inside class" },
-                ["af"] = { query = "@function.outer", desc = "around function " },
-                ["if"] = { query = "@function.inner", desc = "inside function " },
-              },
-            },
-            move = {
-              enable = true,
-              set_jumps = true,
-              goto_next_start = {
-                ["]k"] = { query = "@block.outer", desc = "Next block start" },
-                ["]f"] = { query = "@function.outer", desc = "Next function start" },
-                ["]a"] = { query = "@parameter.inner", desc = "Next parameter start" },
-              },
-              goto_next_end = {
-                ["]K"] = { query = "@block.outer", desc = "Next block end" },
-                ["]F"] = { query = "@function.outer", desc = "Next function end" },
-                ["]A"] = { query = "@parameter.inner", desc = "Next parameter end" },
-              },
-              goto_previous_start = {
-                ["[k"] = { query = "@block.outer", desc = "Previous block start" },
-                ["[f"] = { query = "@function.outer", desc = "Previous function start" },
-                ["[a"] = { query = "@parameter.inner", desc = "Previous parameter start" },
-              },
-              goto_previous_end = {
-                ["[K"] = { query = "@block.outer", desc = "Previous block end" },
-                ["[F"] = { query = "@function.outer", desc = "Previous function end" },
-                ["[A"] = { query = "@parameter.inner", desc = "Previous parameter end" },
-              },
-            },
-            swap = {
-              enable = true,
-              swap_next = {
-                [">K"] = { query = "@block.outer", desc = "Swap next block" },
-                [">F"] = { query = "@function.outer", desc = "Swap next function" },
-                [">A"] = { query = "@parameter.inner", desc = "Swap next parameter" },
-              },
-              swap_previous = {
-                ["<K"] = { query = "@block.outer", desc = "Swap previous block" },
-                ["<F"] = { query = "@function.outer", desc = "Swap previous function" },
-                ["<A"] = { query = "@parameter.inner", desc = "Swap previous parameter" },
-              },
-            },
-          },
-        })
-      end
+      require("nvim-treesitter-textobjects").setup({
+        select = { lookahead = true },
+        move = { set_jumps = true },
+      })
+
+      local selections = {
+        ab = { "@block.outer", "Around block" },
+        ib = { "@block.inner", "Inside block" },
+        ac = { "@class.outer", "Around class" },
+        ic = { "@class.inner", "Inside class" },
+        af = { "@function.outer", "Around function" },
+        ["if"] = { "@function.inner", "Inside function" },
+      }
 
       local moves = {
         goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer", ["]a"] = "@parameter.inner" },
         goto_next_end = { ["]F"] = "@function.outer", ["]C"] = "@class.outer", ["]A"] = "@parameter.inner" },
         goto_previous_start = { ["[f"] = "@function.outer", ["[c"] = "@class.outer", ["[a"] = "@parameter.inner" },
         goto_previous_end = { ["[F"] = "@function.outer", ["[C"] = "@class.outer", ["[A"] = "@parameter.inner" },
+      }
+
+      local swaps = {
+        swap_next = {
+          [">K"] = { "@block.outer", "Swap next block" },
+          [">F"] = { "@function.outer", "Swap next function" },
+          [">A"] = { "@parameter.inner", "Swap next parameter" },
+        },
+        swap_previous = {
+          ["<K"] = { "@block.outer", "Swap previous block" },
+          ["<F"] = { "@function.outer", "Swap previous function" },
+          ["<A"] = { "@parameter.inner", "Swap previous parameter" },
+        },
       }
 
       local function has_textobjects_query(ft)
@@ -208,21 +178,47 @@ return {
           return
         end
 
+        for key, spec in pairs(selections) do
+          local query, desc = spec[1], spec[2]
+          vim.keymap.set({ "x", "o" }, key, function()
+            require("nvim-treesitter-textobjects.select").select_textobject(query, "textobjects")
+          end, {
+            buffer = buf,
+            desc = desc,
+            silent = true,
+          })
+        end
+
         for method, keymaps in pairs(moves) do
           for key, query in pairs(keymaps) do
-            if vim.wo[vim.fn.bufwinid(buf)].diff and key:find("[cC]") then
+            local winid = vim.fn.bufwinid(buf)
+            if winid ~= -1 and vim.wo[winid].diff and key:find("[cC]") then
               goto continue
             end
 
+            local move_method, move_query = method, query
             vim.keymap.set({ "n", "x", "o" }, key, function()
-              require("nvim-treesitter-textobjects.move")[method](query, "textobjects")
+              require("nvim-treesitter-textobjects.move")[move_method](move_query, "textobjects")
             end, {
               buffer = buf,
-              desc = make_desc(key, query),
+              desc = make_desc(key, move_query),
               silent = true,
             })
 
             ::continue::
+          end
+        end
+
+        for method, keymaps in pairs(swaps) do
+          for key, spec in pairs(keymaps) do
+            local swap_method, query, desc = method, spec[1], spec[2]
+            vim.keymap.set("n", key, function()
+              require("nvim-treesitter-textobjects.swap")[swap_method](query)
+            end, {
+              buffer = buf,
+              desc = desc,
+              silent = true,
+            })
           end
         end
       end

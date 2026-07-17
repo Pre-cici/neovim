@@ -70,17 +70,28 @@ return {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
     },
-    keys = {
-      { "<leader>lm", "<cmd>Leet<cr>", desc = "LeetCode Menu" },
-      { "<leader>ll", "<cmd>Leet list<cr>", desc = "LeetCode List" },
-      { "<leader>lr", "<cmd>Leet run<cr>", desc = "LeetCode Run" },
-      { "<leader>ls", "<cmd>Leet submit<cr>", desc = "LeetCode Submit" },
-      { "<leader>lc", "<cmd>Leet console<cr>", desc = "LeetCode Console" },
-      { "<leader>lf", "<cmd>Leet info<cr>", desc = "LeetCode Info" },
-      { "<leader>li", "<cmd>Leet inject<cr>", desc = "LeetCode Inject" },
-    },
     opts = {
       lang = "python3",
+
+      hooks = {
+        question_enter = {
+          function(question)
+            local function map(lhs, command, desc)
+              vim.keymap.set("n", lhs, "<cmd>Leet " .. command .. "<cr>", {
+                buffer = question.bufnr,
+                desc = desc,
+              })
+            end
+
+            map("<localleader>ll", "list", "LeetCode List")
+            map("<localleader>lr", "run", "LeetCode Run")
+            map("<localleader>ls", "submit", "LeetCode Submit")
+            map("<localleader>lc", "console", "LeetCode Console")
+            map("<localleader>lf", "info", "LeetCode Info")
+            map("<localleader>li", "inject", "LeetCode Inject")
+          end,
+        },
+      },
 
       cn = { -- leetcode.cn
         enabled = true, ---@type boolean
