@@ -4,42 +4,31 @@ return {
     event = "VeryLazy",
     dependencies = {
       ---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
-      {
-        "folke/snacks.nvim",
-        opts = {
-          input = {},
-          picker = {
-            actions = {
-              opencode_send = function(...)
-                return require("opencode").snacks_picker_send(...)
-              end,
-            },
-            win = {
-              input = {
-                keys = {
-                  ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
-                },
-              },
-            },
-          },
-          terminal = {},
-        },
-      },
+      { "folke/snacks.nvim" },
     },
     config = function()
-      local opencode_cmd = "opencode --port"
       local opencode_utils = require("utils.opencode")
       local opencode_width = function()
         return math.floor(vim.o.columns * 0.35)
       end
+      local socket = assert(vim.uv.new_tcp())
+      assert(socket:bind("127.0.0.1", 0))
+      local opencode_port = assert(socket:getsockname()).port
+      local release_port = function()
+        if not socket:is_closing() then
+          socket:close()
+        end
+      end
+      local opencode_cmd = ("opencode --port %d"):format(opencode_port)
+      local opencode_url = ("http://localhost:%d"):format(opencode_port)
 
       ---@type opencode.Opts
       vim.g.opencode_opts = {
-        server = opencode_utils.server_opts(opencode_cmd, opencode_width),
+        server = opencode_utils.server_opts(opencode_cmd, opencode_width, opencode_url, release_port),
         events = {
           reload = true,
           permissions = {
-            enabled = true,
+            enabled = false,
             edits = {
               enabled = false,
             },
@@ -49,6 +38,7 @@ return {
 
       vim.api.nvim_create_autocmd("ExitPre", {
         callback = function()
+          release_port()
           if opencode_utils.tmux_available() then
             opencode_utils.close_tmux_pane()
           end
@@ -68,15 +58,28 @@ return {
 
       -- Recommended/example keymaps.
       vim.keymap.set({ "n", "x" }, "<leader>aa", function()
-        require("opencode").ask("@this: ", { submit = true })
+        require("opencode").ask("@this: ")
       end, { desc = "Ask opencode…" })
 
-      vim.keymap.set({ "n", "x" }, "<C-x>", function()
+      vim.keymap.set({ "n", "x" }, "<leader>as", function()
         require("opencode").select()
       end, { desc = "Execute opencode action…" })
 
       vim.keymap.set({ "n", "t" }, "<leader>ac", function()
-        require("opencode").toggle()
+        release_port()
+        if opencode_utils.tmux_available() then
+          opencode_utils.toggle_tmux_pane(opencode_cmd)
+        else
+          opencode_utils.toggle_builtin_terminal(opencode_cmd, opencode_width)
+        end
+
+        require("opencode.server.discovery")
+          .get()
+          :catch(function(err)
+            if err then
+              vim.notify(err, vim.log.levels.ERROR, { title = "opencode" })
+            end
+          end)
       end, { desc = "Toggle opencode" })
 
       vim.keymap.set({ "x" }, "go", function()

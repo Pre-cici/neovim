@@ -8,9 +8,6 @@ local function snacks_terminal_opts(width)
       position = "right",
       width = width(),
       enter = false,
-      on_win = function(win)
-        require("opencode.terminal").setup(win.win)
-      end,
     },
   }
 end
@@ -74,7 +71,6 @@ function M.open_tmux_pane(cmd)
       "tmux",
       "split-window",
       "-h",
-      "-d",
       "-P",
       "-F",
       "#{pane_id}",
@@ -116,9 +112,11 @@ function M.toggle_tmux_pane(cmd)
   end
 end
 
-function M.server_opts(cmd, width)
+function M.server_opts(cmd, width, url, before_start)
   return {
+    url = url,
     start = function()
+      before_start()
       if M.tmux_available() then
         M.open_tmux_pane(cmd)
       else
