@@ -26,21 +26,17 @@
 ---
 --- Refer to the [documentation](https://docs.astral.sh/ruff/editors/) for more details.
 
+local root_utils = require("utils.root")
+
 ---@type vim.lsp.Config
 return {
-  cmd = { 'ruff', 'server' },
-  filetypes = { 'python' },
-  root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
+  cmd = { "ruff", "server" },
+  filetypes = { "python" },
+  root_dir = function(bufnr, on_dir)
+    on_dir(root_utils.python_root(bufnr))
+  end,
   -- settings = {},
-  on_attach = function()
-    vim.api.nvim_create_autocmd('LspAttach', {
-      group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
-      callback = function(args)
-        local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if client and client.name == 'ruff' then
-          client.server_capabilities.hoverProvider = false
-        end
-      end,
-    })
+  on_attach = function(client)
+    client.server_capabilities.hoverProvider = false
   end,
 }

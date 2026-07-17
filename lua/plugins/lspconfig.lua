@@ -15,7 +15,6 @@ return {
       },
     },
     opts = {
-      notify_on_error = false,
       format_on_save = false,
       formatters_by_ft = {
         lua = { "stylua" },
@@ -31,6 +30,7 @@ return {
         markdown = { "prettier" },
         json = { "prettier" },
         jsonc = { "prettier" },
+        jsonl = { "prettier" },
 
         bigfile = function(bufnr)
           local ft = vim.filetype.match({ buf = bufnr })
@@ -65,6 +65,8 @@ return {
         "pyright",
         "ruff",
         "marksman",
+        "clangd",
+        "prettier",
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
@@ -73,11 +75,11 @@ return {
       local mr = require("mason-registry")
       mr:on("package:install:success", function()
         vim.defer_fn(function()
-          -- trigger FileType event to possibly load this newly installed LSP server
-          require("lazy.core.handler.event").trigger({
-            event = "FileType",
-            buf = vim.api.nvim_get_current_buf(),
-          })
+          for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].filetype ~= "" then
+              vim.api.nvim_exec_autocmds("FileType", { buffer = bufnr, modeline = false })
+            end
+          end
         end, 100)
       end)
 

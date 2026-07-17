@@ -8,9 +8,25 @@
 ---
 --- Pre-built binaries can be downloaded from https://github.com/artempyanykh/marksman/releases
 
+local function root_dir(bufnr, on_dir)
+  local root = vim.fs.root(bufnr, { ".marksman.toml", ".git" })
+  if root then
+    on_dir(root)
+    return
+  end
+
+  local path = vim.api.nvim_buf_get_name(bufnr)
+  if path == "" then
+    on_dir(vim.uv.cwd())
+    return
+  end
+
+  on_dir(vim.fs.dirname(path))
+end
+
 ---@type vim.lsp.Config
 return {
-  cmd = { 'marksman', 'server' },
-  filetypes = { 'markdown', 'markdown.mdx' },
-  root_markers = { '.marksman.toml', '.git' },
+  cmd = { "marksman", "server" },
+  filetypes = { "markdown", "markdown.mdx" },
+  root_dir = root_dir,
 }
