@@ -1,241 +1,306 @@
-# kickstart.nvim
+# Neovim Workshop
 
-## Introduction
+一套面向日常开发、技术写作与终端工作流的个人 Neovim 配置。配置以 Lua 模块化组织，使用
+[lazy.nvim](https://github.com/folke/lazy.nvim) 管理插件，并围绕 Python、Markdown、LaTeX、Git、调试和
+OpenCode 做了较完整的集成。
 
-A starting point for Neovim that is:
+> 这是个人配置，不是通用发行版。当前主要在 macOS、Neovim 0.12 和 Kitty/tmux 环境下使用。
 
-* Small
-* Single-file
-* Completely Documented
+## 特性
 
-**NOT** a Neovim distribution, but instead a starting point for your configuration.
+- Catppuccin Macchiato 主题、透明背景、自定义 Alpha Dashboard 和 Heirline 状态栏
+- Snacks picker、Oil 文件浏览器、Edgy 侧栏和持久化会话
+- Neovim 原生 LSP：LuaLS、Pyright、Ruff、Marksman 和 clangd
+- Blink 补全、LuaSnip 代码片段和 Treesitter textobjects
+- Conform 手动格式化，Mason 自动安装语言工具
+- Python 虚拟环境选择、Overseer 任务运行和 Debugpy 调试
+- Markdown 实时渲染、任务状态、浏览器预览和剪贴板图片
+- VimTeX、latexmk、Skim 和 SyncTeX 写作链路
+- LeetCode 中国站与 Python 3 工作流
+- OpenCode 侧栏，支持 tmux pane 和内置 Snacks terminal
 
-## Installation
+## 预览
 
-### Install Neovim
+启动页使用自定义 `WORKSHOP` Dashboard，提供文件搜索、项目、会话、LeetCode、配置和插件管理入口。
+界面组件主要由 Catppuccin、Alpha、Heirline、Incline、Noice 和 Edgy 组成。
 
-Kickstart.nvim targets *only* the latest
-['stable'](https://github.com/neovim/neovim/releases/tag/stable) and latest
-['nightly'](https://github.com/neovim/neovim/releases/tag/nightly) of Neovim.
-If you are experiencing issues, please make sure you have the latest versions.
+## 环境要求
 
-### Install External Dependencies
+### 基础依赖
 
-External Requirements:
-- Basic utils: `git`, `make`, `unzip`, C Compiler (`gcc`)
-- [ripgrep](https://github.com/BurntSushi/ripgrep#installation),
-  [fd-find](https://github.com/sharkdp/fd#installation)
-- Clipboard tool (xclip/xsel/win32yank or other depending on the platform)
-- A [Nerd Font](https://www.nerdfonts.com/): optional, provides various icons
-  - if you have it set `vim.g.have_nerd_font` in `init.lua` to true
-- Emoji fonts (Ubuntu only, and only if you want emoji!) `sudo apt install fonts-noto-color-emoji`
-- Language Setup:
-  - If you want to write Typescript, you need `npm`
-  - If you want to write Golang, you will need `go`
-  - etc.
+- [Neovim](https://neovim.io/) 0.11 或更高版本
+- Git
+- [ripgrep](https://github.com/BurntSushi/ripgrep)
+- 支持图标的 Nerd Font
+- C 编译工具链，用于必要时编译 Treesitter parser
 
-> [!NOTE]
-> See [Install Recipes](#Install-Recipes) for additional Windows and Linux specific notes
-> and quick install snippets
+Mason 会在首次使用时安装以下工具：
 
-### Install Kickstart
+- `lua-language-server`
+- `pyright`
+- `ruff`
+- `marksman`
+- `clangd`
+- `stylua`
+- `prettier`
+- Python DAP adapter（Debugpy）
 
-> [!NOTE]
-> [Backup](#FAQ) your previous configuration (if any exists)
+### 可选依赖
 
-Neovim's configurations are located under the following paths, depending on your OS:
+| 工具         | 用途                                           |
+| ------------ | ---------------------------------------------- |
+| `lazygit`    | Git TUI；安装后启用 `<Space>gg` 和 `<Space>gG` |
+| `yazi`       | 外部终端文件管理器                             |
+| `tmux`       | 跨 pane 导航和独立 OpenCode pane               |
+| `fd`         | 搜索 Mamba Python 环境                         |
+| Python 3     | Python 运行、分析和调试                        |
+| Node.js/npm  | Markdown Preview 等插件的构建环境              |
+| OpenCode CLI | Neovim 中的 AI 侧栏                            |
+| `latexmk`    | VimTeX LaTeX 编译                              |
+| Skim         | macOS PDF 预览与 SyncTeX                       |
 
-| OS | PATH |
-| :- | :--- |
-| Linux, MacOS | `$XDG_CONFIG_HOME/nvim`, `~/.config/nvim` |
-| Windows (cmd)| `%localappdata%\nvim\` |
-| Windows (powershell)| `$env:LOCALAPPDATA\nvim\` |
+VimTeX 当前明确配置为 `latexmk + Skim`，因此 PDF 预览部分是 macOS 专用的。系统剪贴板在 SSH 会话中会自动禁用。
 
-#### Recommended Step
+## 安装
 
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) this repo
-so that you have your own copy that you can modify, then install by cloning the
-fork to your machine using one of the commands below, depending on your OS.
+先备份已有配置：
 
-> [!NOTE]
-> Your fork's URL will be something like this:
-> `https://github.com/<your_github_username>/kickstart.nvim.git`
-
-You likely want to remove `lazy-lock.json` from your fork's `.gitignore` file
-too - it's ignored in the kickstart repo to make maintenance easier, but it's
-[recommended to track it in version control](https://lazy.folke.io/usage/lockfile).
-
-#### Clone kickstart.nvim
-
-> [!NOTE]
-> If following the recommended step above (i.e., forking the repo), replace
-> `nvim-lua` with `<your_github_username>` in the commands below
-
-<details><summary> Linux and Mac </summary>
-
-```sh
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+```bash
+mv ~/.config/nvim ~/.config/nvim.bak
 ```
 
-</details>
+克隆仓库：
 
-<details><summary> Windows </summary>
-
-If you're using `cmd.exe`:
-
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git "%localappdata%\nvim"
-```
-
-If you're using `powershell.exe`
-
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${env:LOCALAPPDATA}\nvim"
-```
-
-</details>
-
-### Post Installation
-
-Start Neovim
-
-```sh
+```bash
+git clone https://github.com/Pre-cici/neovim.git ~/.config/nvim
 nvim
 ```
 
-That's it! Lazy will install all the plugins you have. Use `:Lazy` to view
-the current plugin status. Hit `q` to close the window.
+首次启动时会自动安装 lazy.nvim 和插件。打开一个代码文件后，Mason 会继续安装配置中声明的 LSP、formatter
+和 debugger。
 
-#### Read The Friendly Documentation
+常用维护命令：
 
-Read through the `init.lua` file in your configuration folder for more
-information about extending and exploring Neovim. That also includes
-examples of adding popularly requested plugins.
-
-> [!NOTE]
-> For more information about a particular plugin check its repository's documentation.
-
-
-### Getting Started
-
-[The Only Video You Need to Get Started with Neovim](https://youtu.be/m8C0Cq9Uv9o)
-
-### FAQ
-
-* What should I do if I already have a pre-existing Neovim configuration?
-  * You should back it up and then delete all associated files.
-  * This includes your existing init.lua and the Neovim files in `~/.local`
-    which can be deleted with `rm -rf ~/.local/share/nvim/`
-* Can I keep my existing configuration in parallel to kickstart?
-  * Yes! You can use [NVIM_APPNAME](https://neovim.io/doc/user/starting.html#%24NVIM_APPNAME)`=nvim-NAME`
-    to maintain multiple configurations. For example, you can install the kickstart
-    configuration in `~/.config/nvim-kickstart` and create an alias:
-    ```
-    alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
-    ```
-    When you run Neovim using `nvim-kickstart` alias it will use the alternative
-    config directory and the matching local directory
-    `~/.local/share/nvim-kickstart`. You can apply this approach to any Neovim
-    distribution that you would like to try out.
-* What if I want to "uninstall" this configuration:
-  * See [lazy.nvim uninstall](https://lazy.folke.io/usage#-uninstalling) information
-* Why is the kickstart `init.lua` a single file? Wouldn't it make sense to split it into multiple files?
-  * The main purpose of kickstart is to serve as a teaching tool and a reference
-    configuration that someone can easily use to `git clone` as a basis for their own.
-    As you progress in learning Neovim and Lua, you might consider splitting `init.lua`
-    into smaller parts. A fork of kickstart that does this while maintaining the
-    same functionality is available here:
-    * [kickstart-modular.nvim](https://github.com/dam9000/kickstart-modular.nvim)
-  * Discussions on this topic can be found here:
-    * [Restructure the configuration](https://github.com/nvim-lua/kickstart.nvim/issues/218)
-    * [Reorganize init.lua into a multi-file setup](https://github.com/nvim-lua/kickstart.nvim/pull/473)
-
-### Install Recipes
-
-Below you can find OS specific install instructions for Neovim and dependencies.
-
-After installing all the dependencies continue with the [Install Kickstart](#Install-Kickstart) step.
-
-#### Windows Installation
-
-<details><summary>Windows with Microsoft C++ Build Tools and CMake</summary>
-Installation may require installing build tools and updating the run command for `telescope-fzf-native`
-
-See `telescope-fzf-native` documentation for [more details](https://github.com/nvim-telescope/telescope-fzf-native.nvim#installation)
-
-This requires:
-
-- Install CMake and the Microsoft C++ Build Tools on Windows
-
-```lua
-{'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
-```
-</details>
-<details><summary>Windows with gcc/make using chocolatey</summary>
-Alternatively, one can install gcc and make which don't require changing the config,
-the easiest way is to use choco:
-
-1. install [chocolatey](https://chocolatey.org/install)
-either follow the instructions on the page or use winget,
-run in cmd as **admin**:
-```
-winget install --accept-source-agreements chocolatey.chocolatey
+```vim
+:Lazy          " 插件管理
+:Mason         " 外部工具管理
+:checkhealth   " 环境检查
+:ConformInfo   " formatter 状态
+:checkhealth vim.lsp  " LSP 状态
 ```
 
-2. install all requirements using choco, exit the previous cmd and
-open a new one so that choco path is set, and run in cmd as **admin**:
-```
-choco install -y neovim git ripgrep wget fd unzip gzip mingw make
-```
-</details>
-<details><summary>WSL (Windows Subsystem for Linux)</summary>
+## 目录结构
 
+```text
+.
+├── init.lua                 # 启动入口
+├── lua/
+│   ├── config/              # options、keymaps、autocmds、LSP 生命周期
+│   ├── plugins/             # 按功能拆分的 lazy.nvim plugin specs
+│   └── utils/               # root、Python、terminal 等共享逻辑
+├── lsp/                     # Neovim 0.11+ 原生 LSP server 配置
+├── after/ftplugin/          # 文件类型局部设置与按键
+├── lazy-lock.json           # 插件版本锁
+└── .stylua.toml             # Lua 格式规则
 ```
-wsl --install
-wsl
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip neovim
-```
-</details>
 
-#### Linux Install
-<details><summary>Ubuntu Install Steps</summary>
+启动顺序：
 
+```text
+init.lua
+  -> config.options
+  -> config.keymaps
+  -> config.autocmds
+  -> config.lsp
+  -> plugins
 ```
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip neovim
-```
-</details>
-<details><summary>Debian Install Steps</summary>
 
-```
-sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip curl
+新增插件模块后，还需要在 `lua/plugins/init.lua` 的 `spec` 中显式导入。新增 LSP 时通常需要同时修改：
 
-# Now we install nvim
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-sudo rm -rf /opt/nvim-linux-x86_64
-sudo mkdir -p /opt/nvim-linux-x86_64
-sudo chmod a+rX /opt/nvim-linux-x86_64
-sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+1. `lsp/<server>.lua`
+2. `lua/config/lsp.lua` 中的 `vim.lsp.enable(...)`
+3. `lua/plugins/lspconfig.lua` 中 Mason 的 `ensure_installed`
 
-# make it available in /usr/local/bin, distro installs to /usr/bin
-sudo ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/
-```
-</details>
-<details><summary>Fedora Install Steps</summary>
+## 核心工作流
 
-```
-sudo dnf install -y gcc make git ripgrep fd-find unzip neovim
-```
-</details>
+### 搜索与文件
 
-<details><summary>Arch Install Steps</summary>
+Snacks picker 默认从当前 Git 根目录搜索；Oil 使用可编辑目录 buffer 完成文件操作。
 
-```
-sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
-```
-</details>
+| 按键                      | 功能                                |
+| ------------------------- | ----------------------------------- |
+| `<Space><Space>`          | 查找项目文件                        |
+| `<Space>ff`               | 查找文件，包括隐藏文件              |
+| `<Space>/` / `<Space>sg`  | 项目内实时搜索                      |
+| `<Space>sw`               | 搜索光标下单词                      |
+| `<Space>sb` / `<Space>sB` | 搜索当前 buffer / 所有打开的 buffer |
+| `<Space>fr`               | 最近文件                            |
+| `<Space>fp`               | 项目列表                            |
+| `<Space>bb`               | Buffer picker                       |
+| `<Space>e`                | 打开 Oil                            |
+| `<Space>fn` / `<Space>fw` | 新建文件 / 保存文件                 |
 
+### Buffer、窗口与终端
+
+| 按键                  | 功能                                 |
+| --------------------- | ------------------------------------ |
+| `Shift-h` / `Shift-l` | 上一个 / 下一个 buffer               |
+| `<Space>bd`           | 删除当前 buffer                      |
+| `<Space>bo`           | 删除其他 buffer                      |
+| `Ctrl-h/j/k/l`        | 在 Neovim window 或 tmux pane 间移动 |
+| `<Space>wd`           | 关闭窗口                             |
+| `<Space>tt`           | 切换底部终端                         |
+| `<Space><Tab><Tab>`   | 新建 tab                             |
+| `<Space><Tab>]`       | 下一个 tab                           |
+
+`<leader>` 和 `<localleader>` 都是空格。宏录制键从 `q` 移到了 `Q`。
+
+### LSP、诊断与格式化
+
+| 按键        | 功能                          |
+| ----------- | ----------------------------- |
+| `gd`        | 跳转到定义                    |
+| `K`         | LSP hover                     |
+| `gK`        | Signature help                |
+| `<Space>cA` | Code action                   |
+| `<Space>cl` | 当前 buffer 的 LSP 信息       |
+| `<Space>th` | 切换 inlay hints              |
+| `<Space>cf` | 使用 Conform 格式化           |
+| `<Space>cd` | 当前行诊断                    |
+| `]d` / `[d` | 下一个 / 上一个诊断           |
+| `]e` / `[e` | 下一个 / 上一个错误           |
+| `<Space>xx` | Trouble workspace diagnostics |
+
+格式化默认不会在保存时自动执行：
+
+| 文件类型             | Formatter                               |
+| -------------------- | --------------------------------------- |
+| Lua                  | Stylua                                  |
+| Python               | Ruff fix、organize imports、Ruff format |
+| Markdown             | Prettier                                |
+| JSON / JSONC / JSONL | Prettier                                |
+
+Python 中由 Pyright 负责分析和 hover，Ruff 负责 lint、修复和格式化。解释器优先级为：venv-selector 当前选择、
+项目 `.venv`、`VIRTUAL_ENV`、`CONDA_PREFIX`、系统 `python3`。
+
+### Python 运行与调试
+
+| 按键               | 功能                               |
+| ------------------ | ---------------------------------- |
+| `<Space>cv`        | 选择 Python 虚拟环境               |
+| `<Space>or`        | 通过 Overseer 运行当前 Python 文件 |
+| `<Space>ow`        | 切换任务列表                       |
+| `<Space>db`        | 切换断点                           |
+| `<Space>dB`        | 条件断点                           |
+| `F5` / `F6`        | 开始或继续 / 暂停                  |
+| `F1` / `F2` / `F3` | Step into / over / out             |
+| `F7`               | 切换 DAP UI                        |
+| `F8` / `F9`        | 终止 / 重跑上次调试                |
+| `<Space>de`        | Evaluate expression                |
+
+Overseer 会在检测到的项目根目录运行文件，并只为当前任务设置 `PYTHONPATH`。DAP 使用同一套活动解释器选择逻辑。
+
+### Git
+
+| 按键                      | 功能                          |
+| ------------------------- | ----------------------------- |
+| `<Space>gg`               | 在当前 Git 根目录打开 Lazygit |
+| `<Space>gG`               | 在当前工作目录打开 Lazygit    |
+| `]c` / `[c`               | 下一个 / 上一个 Git hunk      |
+| `<Space>gs` / `<Space>gr` | Stage / reset hunk            |
+| `<Space>gp`               | Preview hunk                  |
+| `<Space>gb`               | 当前行 blame                  |
+| `<Space>gd`               | 与 index 比较                 |
+
+Lazygit 快捷键仅在系统能够找到 `lazygit` 时注册。
+
+### Markdown
+
+| 按键                  | 功能                            |
+| --------------------- | ------------------------------- |
+| `<Space>tm`           | 切换 Markdown 渲染              |
+| `<Space>mp`           | 切换浏览器预览                  |
+| `<Space>mc`           | 切换任务状态                    |
+| Visual `Ctrl-b/i/s/c` | 粗体 / 斜体 / 删除线 / 行内代码 |
+| `Alt-o` / `Alt-O`     | 在下方 / 上方插入列表项         |
+| `<Space>mr`           | 重新编号列表                    |
+| `<Space>p`            | 粘贴剪贴板图片                  |
+
+Markdown buffer 会启用换行和拼写检查，并由 Marksman 提供链接、符号和跳转能力。
+
+### LaTeX
+
+VimTeX 保留默认的 buffer-local 映射：
+
+| 按键        | 功能                     |
+| ----------- | ------------------------ |
+| `<Space>ll` | 启动或停止持续编译       |
+| `<Space>lv` | 在 Skim 中查看并正向同步 |
+| `<Space>le` | 查看编译错误             |
+| `<Space>lt` | 打开目录                 |
+
+编译链路为：
+
+```text
+Neovim -> VimTeX -> latexmk -> PDF -> Skim
+```
+
+Skim 需要单独配置 inverse search，才能通过 SyncTeX 从 PDF 返回 Neovim。
+
+### OpenCode
+
+需要提前安装并配置 [OpenCode](https://opencode.ai/)。Neovim 启动独立的固定地址 `opencode serve`，
+`opencode.nvim` 只负责 API、上下文与文件重载；tmux pane 或 Edgy 右侧 Snacks terminal 通过
+`opencode attach` 显示 TUI。
+
+| 按键                | 功能                        |
+| ------------------- | --------------------------- |
+| `<Space>ac`         | 打开或切换 OpenCode         |
+| `Ctrl-.`            | 在 terminal 中切换 OpenCode |
+| `<Space>aa`         | 将当前上下文提交给 OpenCode |
+| `<Space>as`         | 选择 OpenCode action        |
+| `goo` / visual `go` | 发送当前行或 visual range   |
+| `Alt-u` / `Alt-d`   | 滚动 OpenCode session       |
+| Picker 中 `Alt-a`   | 将选中结果发送给 OpenCode   |
+| `:OpencodeStop`     | 停止 OpenCode 进程          |
+
+为了避免 Kitty graphics capability reply 污染 Neovim 输入，TUI 以 `OPENTUI_GRAPHICS=false` 启动。
+
+### LeetCode
+
+运行 `:Leet` 进入 LeetCode 界面。当前默认使用中国站、中文题目和 Python 3。进入题目 buffer 后：
+
+| 按键        | 功能              |
+| ----------- | ----------------- |
+| `<Space>ll` | 题目列表          |
+| `<Space>lr` | 运行              |
+| `<Space>ls` | 提交              |
+| `<Space>lc` | Console           |
+| `<Space>lf` | 题目信息          |
+| `<Space>li` | 注入模板或 import |
+
+这些映射只存在于 LeetCode 题目 buffer，不会覆盖 VimTeX 的 `<Space>ll`。
+
+## 验证与维护
+
+仓库使用 StyLua，主要规则为 2 空格缩进和 120 列宽：
+
+```bash
+stylua --check .
+```
+
+修改配置后至少执行：
+
+```bash
+nvim --headless +qa
+git diff --check
+```
+
+涉及终端、调试、VimTeX、Markdown 渲染或 OpenCode 的修改仍应在实际 Neovim UI 中进行 smoke test。
+
+## 说明
+
+- 自动保存格式化刻意关闭，请使用 `<Space>cf`。
+- OpenCode、Yazi、Lazygit、Skim 和 LaTeX 工具链都属于可选外部依赖。
+- Python、Mamba 和 Homebrew 搜索路径包含当前机器的 macOS 约定，移植到 Linux 前需要调整。
+- 插件版本由 `lazy-lock.json` 固定；升级前建议先提交当前配置并检查 `:Lazy log`。
