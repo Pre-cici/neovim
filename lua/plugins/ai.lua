@@ -59,6 +59,10 @@ return {
       -- Recommended/example keymaps.
       vim.keymap.set({ "n", "x" }, "<leader>aa", function()
         require("opencode").ask("@this: ")
+      end, { desc = "Ask opencode @this…" })
+
+      vim.keymap.set({ "n", "x" }, "<leader>ap", function()
+        require("opencode").ask("")
       end, { desc = "Ask opencode…" })
 
       vim.keymap.set({ "n", "x" }, "<leader>as", function()

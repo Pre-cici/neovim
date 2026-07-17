@@ -71,6 +71,7 @@ function M.open_tmux_pane(cmd)
       "tmux",
       "split-window",
       "-h",
+      "-d",
       "-P",
       "-F",
       "#{pane_id}",
@@ -86,6 +87,14 @@ function M.open_tmux_pane(cmd)
   end
 
   tmux_pane_id = vim.trim(result.stdout or "")
+  local passthrough_result = vim
+    .system({ "tmux", "set-option", "-p", "-t", tmux_pane_id, "allow-passthrough", "off" }, { text = true })
+    :wait()
+  if passthrough_result.code ~= 0 then
+    notify_error(
+      passthrough_result.stderr ~= "" and passthrough_result.stderr or "Failed to disable tmux passthrough for opencode"
+    )
+  end
 end
 
 function M.close_tmux_pane()
