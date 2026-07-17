@@ -34,6 +34,7 @@ require('lazy').setup {
     { import = 'plugins.code' },
     { import = 'plugins.debug' },
     { import = 'plugins.markdown' },
+    { import = 'plugins.latex' },
     { import = 'plugins.ai' },
   },
 
