@@ -3,10 +3,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Globals
-vim.g.inlay_hints = true
 vim.g.transparent = true
 vim.g.bordered = true
-vim.g.autoformat = true
 vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
 vim.g.deprecation_warnings = false
 vim.g.markdown_recommended_style = 0
@@ -107,6 +105,6 @@ opt.pumblend = 10
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
 opt.jumpoptions = "stack"
 opt.smoothscroll = true
-opt.spelllang = { "en" }
+opt.spelllang = { "en", "cjk" }
 opt.virtualedit = "block"
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }

@@ -43,7 +43,6 @@ keymap.set("v", "<A-K>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv
 -- buffers
 keymap.set("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 keymap.set("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
-keymap.set("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 keymap.set("n", "<leader>bd", function() Snacks.bufdelete() end, { desc = "Delete Buffer" })
 keymap.set("n", "<leader>bo", function() Snacks.bufdelete.other() end, { desc = "Delete Other Buffers" })
 keymap.set("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
@@ -56,7 +55,7 @@ keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 keymap.set("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
 
 -- terminal
-keymap.set({ "n", "t" }, "<leader>tt", function()
+keymap.set("n", "<leader>tt", function()
   Snacks.terminal.toggle()
 end, { desc = "Toggle Terminal" })
 

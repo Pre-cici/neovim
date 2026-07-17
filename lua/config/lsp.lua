@@ -54,6 +54,25 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set(modes, lhs, rhs, opts)
     end
 
+    local function marksman_fallback_path()
+      local cfile = vim.fn.expand("<cfile>")
+      if cfile == "" then
+        return nil
+      end
+
+      local base = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr))
+      if not base then
+        return nil
+      end
+
+      local path = vim.fs.normalize(vim.fs.joinpath(base, cfile))
+      if vim.uv.fs_stat(path) then
+        return path
+      end
+
+      return nil
+    end
+
     local float_opts = { border = "rounded" }
     if has(vim.lsp.protocol.Methods.textDocument_hover) then
       map("n", "K", function()
@@ -65,22 +84,52 @@ vim.api.nvim_create_autocmd("LspAttach", {
       map("n", "gK", function()
         vim.lsp.buf.signature_help(float_opts)
       end, "Signature Help")
-      map("i", "<C-k>", function()
-        vim.lsp.buf.signature_help(float_opts)
-      end, "Signature Help")
     end
 
     -- =========================
     -- g* : goto family (classic)
     -- =========================
     if has(vim.lsp.protocol.Methods.textDocument_definition) then
-      map("n", "gd", vim.lsp.buf.definition, "Goto Definition")
+      map("n", "gd", function()
+        if client.name ~= "marksman" then
+          vim.lsp.buf.definition()
+          return
+        end
+
+        local method = vim.lsp.protocol.Methods.textDocument_definition
+        local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+        local fallback_path = marksman_fallback_path()
+        client:request(method, params, function(err, result, ctx)
+          if err then
+            vim.notify(err.message or tostring(err), vim.log.levels.ERROR)
+            return
+          end
+
+          if result and not (type(result) == "table" and vim.tbl_isempty(result)) then
+            local handler = client.handlers[method] or vim.lsp.handlers[method]
+            handler(nil, result, ctx, {})
+            return
+          end
+
+          if fallback_path then
+            vim.cmd.edit(vim.fn.fnameescape(fallback_path))
+            return
+          end
+
+          vim.notify(
+            "No markdown definition found here. If this is a file link, make sure the target exists.",
+            vim.log.levels.INFO
+          )
+        end, bufnr)
+      end, "Goto Definition")
     end
 
     -- =========================
     -- <leader>c : code related
     -- =========================
-    map("n", "<leader>cl", function() Snacks.picker.lsp_config() end, "LSP Info")
+    map("n", "<leader>cl", function()
+      Snacks.picker.lsp_config()
+    end, "LSP Info")
 
     if has(vim.lsp.protocol.Methods.textDocument_codeAction) then
       map({ "n", "x" }, "<leader>cA", vim.lsp.buf.code_action, "Code: Action")
@@ -132,9 +181,19 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.api.nvim_create_autocmd("LspDetach", {
         group = hl_group,
         buffer = bufnr,
-        callback = function()
-          pcall(vim.lsp.buf.clear_references)
-          pcall(vim.api.nvim_del_augroup_by_id, hl_group)
+        callback = function(args)
+          local detached_id = args.data.client_id
+          vim.schedule(function()
+            local has_highlight_client = vim.iter(vim.lsp.get_clients({ bufnr = bufnr })):any(function(attached)
+              return attached.id ~= detached_id
+                and attached:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, bufnr)
+            end)
+
+            if not has_highlight_client then
+              pcall(vim.lsp.buf.clear_references)
+              pcall(vim.api.nvim_del_augroup_by_id, hl_group)
+            end
+          end)
         end,
       })
     end
