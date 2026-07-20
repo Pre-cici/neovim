@@ -9,6 +9,12 @@
 --- Pre-built binaries can be downloaded from https://github.com/artempyanykh/marksman/releases
 
 local function root_dir(bufnr, on_dir)
+  local vault = vim.fs.root(bufnr, { ".obsidian" })
+  if vault then
+    on_dir(vault)
+    return
+  end
+
   local root = vim.fs.root(bufnr, { ".marksman.toml", ".git" })
   if root then
     on_dir(root)

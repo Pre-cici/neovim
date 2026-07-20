@@ -19,12 +19,10 @@ return {
       formatters_by_ft = {
         lua = { "stylua" },
 
-        python = { -- To fix auto-fixable lint errors.
-          "ruff_fix",
-          -- To organize the imports.
-          "ruff_organize_imports",
-          -- To run the Ruff formatter.
-          "ruff_format",
+        python = {
+          "ruff_fix", -- To fix auto-fixable lint errors.
+          "ruff_organize_imports", -- To organize the imports.
+          "ruff_format", -- To run the Ruff formatter.
         },
 
         markdown = { "prettier" },
@@ -62,7 +60,7 @@ return {
       ensure_installed = {
         "stylua",
         "lua-language-server",
-        "pyright",
+        "ty",
         "ruff",
         "marksman",
         "clangd",

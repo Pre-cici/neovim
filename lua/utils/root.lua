@@ -12,7 +12,7 @@ M.project_markers = {
 }
 
 M.python_markers = {
-  "pyrightconfig.json",
+  "ty.toml",
   "uv.lock",
   "pyproject.toml",
   "setup.py",

@@ -1,6 +1,6 @@
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("ruff")
-vim.lsp.enable("pyright")
+vim.lsp.enable("ty")
 vim.lsp.enable("marksman")
 vim.lsp.enable("clangd")
 
@@ -106,8 +106,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
           end
 
           if result and not (type(result) == "table" and vim.tbl_isempty(result)) then
-            local handler = client.handlers[method] or vim.lsp.handlers[method]
-            handler(nil, result, ctx, {})
+            local locations = vim.islist(result) and result or { result }
+            if #locations == 1 then
+              vim.lsp.util.show_document(locations[1], client.offset_encoding, { focus = true })
+            else
+              local items = vim.lsp.util.locations_to_items(locations, client.offset_encoding)
+              vim.fn.setqflist({}, " ", { title = "LSP locations", items = items })
+              vim.cmd("botright copen")
+            end
             return
           end
 
