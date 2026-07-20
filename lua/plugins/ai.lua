@@ -66,6 +66,25 @@ return {
       end, { desc = "Ask opencode…" })
 
       vim.keymap.set({ "n", "x" }, "<leader>as", function()
+        require("opencode.server.discovery")
+          .locally()
+          :next(require("opencode.ui.select_server").select_server)
+          :next(function(server)
+            return server:connect()
+          end)
+          :next(function(server)
+            return require("opencode.ui.select_session").select_session(server):next(function(session)
+              return server:select_session(session.id)
+            end)
+          end)
+          :catch(function(err)
+            if err then
+              vim.notify(err, vim.log.levels.ERROR, { title = "opencode" })
+            end
+          end)
+      end, { desc = "Select opencode server and session" })
+
+      vim.keymap.set({ "n", "x" }, "<leader>ax", function()
         require("opencode").select()
       end, { desc = "Execute opencode action…" })
 
@@ -77,13 +96,11 @@ return {
           opencode_utils.toggle_builtin_terminal(opencode_cmd, opencode_width)
         end
 
-        require("opencode.server.discovery")
-          .get()
-          :catch(function(err)
-            if err then
-              vim.notify(err, vim.log.levels.ERROR, { title = "opencode" })
-            end
-          end)
+        require("opencode.server.discovery").get():catch(function(err)
+          if err then
+            vim.notify(err, vim.log.levels.ERROR, { title = "opencode" })
+          end
+        end)
       end, { desc = "Toggle opencode" })
 
       vim.keymap.set({ "x" }, "go", function()
