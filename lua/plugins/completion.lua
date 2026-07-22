@@ -9,6 +9,7 @@ return {
         "lazy.nvim",
         "snacks.nvim",
         "catppuccin",
+        "rose-pine",
         "nvim-dap-ui",
         "overseer.nvim",
         "leetcode.nvim",

@@ -1,5 +1,70 @@
-local colorscheme = "catppuccin"
+local colorscheme = "rose-pine"
 local schemes = {
+  ["rose-pine"] = {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("rose-pine").setup({
+        variant = "moon",
+        dark_variant = "moon",
+        dim_inactive_windows = false,
+        extend_background_behind_borders = false,
+        enable = {
+          terminal = false,
+          legacy_highlights = true,
+          migrations = true,
+        },
+        styles = {
+          bold = true,
+          italic = false,
+          transparency = vim.g.transparent,
+        },
+        highlight_groups = {
+          EndOfBuffer = { fg = "base" },
+          NormalFloat = { bg = "none" },
+          FloatBorder = { bg = "none" },
+          NormalSB = { bg = "none" },
+          Pmenu = { bg = "none" },
+          BlinkCmpMenuBorder = { bg = "none" },
+          NotifyBackground = { bg = "base" },
+          DropBarMenuHoverIcon = { bg = "none", fg = "rose", reverse = false },
+          LazyNormal = { bg = "surface", fg = "text" },
+          StatusLineTerm = { link = "StatusLine" },
+          StatusLineTermNC = { link = "StatusLineNC" },
+          RenderMarkdownCode = { bg = "none" },
+          Comment = { italic = true },
+          Conditional = { italic = true },
+          DiagnosticVirtualTextError = { italic = true },
+          DiagnosticVirtualTextHint = { italic = true },
+          DiagnosticVirtualTextInfo = { italic = true },
+          DiagnosticVirtualTextOk = { italic = true },
+          DiagnosticVirtualTextWarn = { italic = true },
+          LspInlayHint = { bg = "none" },
+          ["@markup.strong"] = { fg = "love", bold = true },
+          ["@markup.italic"] = { fg = "love", italic = true },
+          ["@markup.strikethrough"] = { fg = "muted", strikethrough = true },
+          ["@markup.math"] = { fg = "foam" },
+          ["@markup.quote"] = { fg = "rose" },
+          ["@markup.environment"] = { fg = "rose" },
+          ["@markup.environment.name"] = { fg = "foam" },
+          ["@markup.link"] = { fg = "iris" },
+          ["@markup.link.markdown_inline"] = { fg = "iris" },
+          ["@markup.link.label"] = { fg = "iris" },
+          ["@markup.link.label.markdown_inline"] = { fg = "iris" },
+          ["@markup.link.url"] = { fg = "foam", italic = true, underline = true },
+          ["@markup.raw"] = { fg = "foam" },
+          ["@markup.raw.markdown_inline"] = { fg = "foam" },
+          ["@markup.list"] = { fg = "pine" },
+          ["@markup.list.checked"] = { fg = "foam" },
+          ["@markup.list.unchecked"] = { fg = "muted" },
+        },
+      })
+      vim.cmd.colorscheme("rose-pine-moon")
+    end,
+  },
+
   catppuccin = {
     "catppuccin/nvim",
     name = "catppuccin",

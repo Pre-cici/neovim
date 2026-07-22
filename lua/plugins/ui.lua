@@ -14,7 +14,25 @@ return {
       local dashboard = require("alpha.themes.dashboard")
 
       local function set_dashboard_highlights()
-        local colors = require("catppuccin.palettes").get_palette()
+        local colors
+        if vim.g.colors_name and vim.g.colors_name:match("^rose%-pine") then
+          local palette = require("rose-pine.palette")
+          colors = {
+            mauve = palette.iris,
+            lavender = palette.foam,
+            blue = palette.foam,
+            sapphire = palette.pine,
+            teal = palette.rose,
+            subtext0 = palette.muted,
+            subtext1 = palette.subtle,
+            peach = palette.gold,
+            green = palette.leaf,
+            red = palette.love,
+            overlay0 = palette.muted,
+          }
+        else
+          colors = require("catppuccin.palettes").get_palette()
+        end
         local highlights = {
           DashboardLogo1 = { fg = colors.mauve, bold = true },
           DashboardLogo2 = { fg = colors.lavender, bold = true },
